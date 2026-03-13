@@ -901,6 +901,313 @@ footer p { font-size: 13px; color: var(--offwhite); opacity: 0.45; }
   nav { padding: 16px 6vw; }
   .earn-amount { font-size: 52px; }
 }
+
+/* ─── MODAL STYLES ─── */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-content {
+  background: var(--black);
+  border: 1px solid rgba(0, 230, 118, 0.2);
+  border-radius: 16px;
+  padding: 48px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), 0 0 1px rgba(0, 230, 118, 0.1);
+  position: relative;
+  animation: slideUp 0.4s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(0, 230, 118, 0.1);
+  border: 1px solid rgba(0, 230, 118, 0.2);
+  color: var(--green);
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.modal-close:hover {
+  background: rgba(0, 230, 118, 0.2);
+  border-color: rgba(0, 230, 118, 0.4);
+}
+
+.modal-header {
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.modal-header h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 32px;
+  color: var(--white);
+  margin-bottom: 8px;
+  letter-spacing: 0.01em;
+}
+
+.modal-header p {
+  font-size: 14px;
+  color: var(--offwhite);
+  opacity: 0.7;
+}
+
+/* Form Styles */
+.form-container,
+.link-container,
+.loading-container {
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 24px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 14px 18px;
+  background: var(--gray2);
+  border: 1px solid rgba(0, 230, 118, 0.2);
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.form-input::placeholder {
+  color: var(--offwhite);
+  opacity: 0.4;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--green);
+  background: rgba(0, 230, 118, 0.05);
+  box-shadow: 0 0 0 3px rgba(0, 230, 118, 0.1);
+}
+
+.btn-submit {
+  width: 100%;
+  padding: 14px 24px;
+  background: var(--green);
+  color: var(--black);
+  font-weight: 600;
+  font-size: 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'DM Sans', sans-serif;
+  letter-spacing: 0.02em;
+}
+
+.btn-submit:hover {
+  background: #00ff84;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 230, 118, 0.3);
+}
+
+.btn-submit:active {
+  transform: translateY(0);
+}
+
+.btn-submit:disabled {
+  background: var(--gray);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Link Display Styles */
+.referral-link-box {
+  display: flex;
+  gap: 12px;
+  margin: 32px 0;
+  align-items: stretch;
+}
+
+.link-input {
+  flex: 1;
+  padding: 16px 18px;
+  background: var(--gray2);
+  border: 1px solid rgba(0, 230, 118, 0.2);
+  color: var(--green);
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  border-radius: 8px;
+  cursor: text;
+}
+
+.link-input:focus {
+  outline: none;
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(0, 230, 118, 0.1);
+}
+
+.copy-btn {
+  padding: 12px 20px;
+  background: rgba(0, 230, 118, 0.1);
+  border: 1px solid rgba(0, 230, 118, 0.3);
+  color: var(--green);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 50px;
+}
+
+.copy-btn:hover {
+  background: rgba(0, 230, 118, 0.2);
+  border-color: var(--green);
+  transform: scale(1.05);
+}
+
+.copy-btn:active {
+  transform: scale(0.95);
+}
+
+.copied-message {
+  color: var(--green);
+  font-size: 13px;
+  font-weight: 600;
+  margin: 16px 0;
+  animation: pulse 0.5s ease;
+}
+
+@keyframes pulse {
+  0% { opacity: 0; transform: scale(0.9); }
+  50% { opacity: 1; }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.btn-share {
+  width: 100%;
+  padding: 12px 24px;
+  background: rgba(0, 230, 118, 0.1);
+  border: 1px solid rgba(0, 230, 118, 0.3);
+  color: var(--green);
+  font-weight: 600;
+  font-size: 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'DM Sans', sans-serif;
+  letter-spacing: 0.02em;
+  margin: 16px 0;
+}
+
+.btn-share:hover {
+  background: rgba(0, 230, 118, 0.2);
+  border-color: var(--green);
+  transform: translateY(-1px);
+}
+
+.error-message {
+  padding: 12px 16px;
+  background: rgba(255, 0, 0, 0.1);
+  border: 1px solid rgba(255, 0, 0, 0.3);
+  color: #ff6b6b;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 16px;
+  animation: slideUp 0.3s ease;
+}
+
+.modal-footer-text {
+  font-size: 12px;
+  color: var(--offwhite);
+  opacity: 0.5;
+  margin-top: 20px;
+}
+
+/* Loading State */
+.loading-container {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(0, 230, 118, 0.2);
+  border-top-color: var(--green);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-container p {
+  color: var(--offwhite);
+  font-size: 15px;
+}
+
+/* Mobile Responsive */
+@media (max-width: 600px) {
+  .modal-content {
+    padding: 36px 24px;
+    margin: 20px;
+  }
+  
+  .modal-header h2 {
+    font-size: 24px;
+  }
+  
+  .referral-link-box {
+    flex-direction: column;
+  }
+  
+  .copy-btn {
+    width: 100%;
+    min-width: unset;
+  }
+}
 </style>
 </head>
 <body>
@@ -1146,10 +1453,10 @@ footer p { font-size: 13px; color: var(--offwhite); opacity: 0.45; }
 <section class="cta-section" id="join">
   <h2 class="section-title">Ready to<br>start earning?</h2>
   <p>Text us back or click below. We'll create your personal referral link in minutes and you can start sharing right away.</p>
-  <a href="sms:?&body=YES" class="btn-dark">
-    💬 Text YES to Get My Link
-  </a>
-  <p style="margin-top: 24px; font-size: 13px; opacity: 0.5;">No signup form. No long process. Just reply YES.</p>
+  <button id="getLinkBtn" class="btn-dark">
+    🔗 Get My Link
+  </button>
+  <p style="margin-top: 24px; font-size: 13px; opacity: 0.5;">Enter your email and we'll generate your personal referral link instantly.</p>
 </section>
 
 <!-- FAQ -->
@@ -1210,6 +1517,71 @@ footer p { font-size: 13px; color: var(--offwhite); opacity: 0.45; }
   </div>
 </section>
 
+<!-- REFERRAL MODAL -->
+<div id="referralModal" class="modal-overlay">
+  <div class="modal-content">
+    <!-- Email Form -->
+    <div id="emailFormContainer" class="form-container">
+      <div class="modal-header">
+        <h2>Get Your Referral Link</h2>
+        <p>Enter your email to generate your unique referral code</p>
+      </div>
+      
+      <form id="emailForm">
+        <div class="form-group">
+          <input 
+            type="email" 
+            id="emailInput" 
+            placeholder="Your email address" 
+            required
+            autocomplete="email"
+            class="form-input"
+          >
+        </div>
+        <button type="submit" class="btn-submit">Generate Link</button>
+      </form>
+
+      <div id="errorMessage" class="error-message" style="display: none;"></div>
+      
+      <p class="modal-footer-text">We'll generate your personal link in seconds.</p>
+    </div>
+
+    <!-- Referral Link Display -->
+    <div id="linkDisplayContainer" class="link-container" style="display: none;">
+      <div class="modal-header">
+        <h2>Your Referral Link</h2>
+        <p>Share this link everywhere to earn money</p>
+      </div>
+
+      <div class="referral-link-box">
+        <input 
+          type="text" 
+          id="referralLinkInput" 
+          class="link-input" 
+          readonly
+        >
+        <button id="copyBtn" class="copy-btn" title="Copy to clipboard">
+          <span id="copyIcon">📋</span>
+        </button>
+      </div>
+
+      <div id="copiedMessage" class="copied-message" style="display: none;">✓ Copied to clipboard!</div>
+
+      <button id="shareBtn" class="btn-share">Share This Link</button>
+      
+      <p class="modal-footer-text">This is your unique link. Share it to earn commissions.</p>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loadingContainer" class="loading-container" style="display: none;">
+      <div class="spinner"></div>
+      <p>Generating your referral link...</p>
+    </div>
+
+    <button id="closeModalBtn" class="modal-close">✕</button>
+  </div>
+</div>
+
 <!-- FOOTER -->
 <footer>
   <p>© 2025 GoMagic. All rights reserved.</p>
@@ -1217,6 +1589,246 @@ footer p { font-size: 13px; color: var(--offwhite); opacity: 0.45; }
 </footer>
 
 <script>
+// ═══════════════════════════════════════════════════════════════════════════
+// REFERRAL LINK LOOKUP SYSTEM
+// ═══════════════════════════════════════════════════════════════════════════
+
+class ReferralLinkManager {
+  constructor() {
+    this.apiEndpoint = '/api/get-referral'; // Vercel API route
+    this.linkBaseUrl = 'https://gomagic.ca/ref/';
+    this.initElements();
+    this.attachEventListeners();
+    this.checkUrlForExistingRef();
+  }
+
+  initElements() {
+    this.modal = document.getElementById('referralModal');
+    this.getLinkBtn = document.getElementById('getLinkBtn');
+    this.closeModalBtn = document.getElementById('closeModalBtn');
+    this.emailForm = document.getElementById('emailForm');
+    this.emailInput = document.getElementById('emailInput');
+    this.errorMessage = document.getElementById('errorMessage');
+    
+    this.emailFormContainer = document.getElementById('emailFormContainer');
+    this.linkDisplayContainer = document.getElementById('linkDisplayContainer');
+    this.loadingContainer = document.getElementById('loadingContainer');
+    
+    this.referralLinkInput = document.getElementById('referralLinkInput');
+    this.copyBtn = document.getElementById('copyBtn');
+    this.copiedMessage = document.getElementById('copiedMessage');
+    this.shareBtn = document.getElementById('shareBtn');
+  }
+
+  attachEventListeners() {
+    this.getLinkBtn.addEventListener('click', () => this.openModal());
+    this.closeModalBtn.addEventListener('click', () => this.closeModal());
+    this.modal.addEventListener('click', (e) => {
+      if (e.target === this.modal) this.closeModal();
+    });
+    
+    this.emailForm.addEventListener('submit', (e) => this.handleFormSubmit(e));
+    this.copyBtn.addEventListener('click', () => this.copyToClipboard());
+    this.shareBtn.addEventListener('click', () => this.shareLink());
+    
+    // Close modal on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && this.modal.classList.contains('active')) {
+        this.closeModal();
+      }
+    });
+  }
+
+  // ───────────────────────────────────────────────────────────────────────
+  // MODAL MANAGEMENT
+  // ───────────────────────────────────────────────────────────────────────
+
+  openModal() {
+    this.modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    this.emailInput.focus();
+    this.resetForm();
+  }
+
+  closeModal() {
+    this.modal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+  }
+
+  resetForm() {
+    this.emailForm.reset();
+    this.errorMessage.style.display = 'none';
+    this.emailFormContainer.style.display = 'block';
+    this.linkDisplayContainer.style.display = 'none';
+    this.loadingContainer.style.display = 'none';
+  }
+
+  // ───────────────────────────────────────────────────────────────────────
+  // FORM SUBMISSION & API CALL
+  // ───────────────────────────────────────────────────────────────────────
+
+  async handleFormSubmit(e) {
+    e.preventDefault();
+    const email = this.emailInput.value.trim();
+
+    if (!this.validateEmail(email)) {
+      this.showError('Please enter a valid email address.');
+      return;
+    }
+
+    this.showLoading();
+    
+    try {
+      const response = await fetch(this.apiEndpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Failed to generate referral link');
+      }
+
+      const data = await response.json();
+      const referralCode = data.code || data.referralCode;
+
+      if (!referralCode) {
+        throw new Error('No referral code received from server');
+      }
+
+      this.displayReferralLink(referralCode);
+    } catch (error) {
+      console.error('Error:', error);
+      this.showError(error.message || 'Failed to generate your referral link. Please try again.');
+    }
+  }
+
+  validateEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  }
+
+  showLoading() {
+    this.emailFormContainer.style.display = 'none';
+    this.linkDisplayContainer.style.display = 'none';
+    this.loadingContainer.style.display = 'flex';
+  }
+
+  showError(message) {
+    this.errorMessage.textContent = message;
+    this.errorMessage.style.display = 'block';
+    this.emailFormContainer.style.display = 'block';
+    this.linkDisplayContainer.style.display = 'none';
+    this.loadingContainer.style.display = 'none';
+  }
+
+  // ───────────────────────────────────────────────────────────────────────
+  // REFERRAL LINK DISPLAY
+  // ───────────────────────────────────────────────────────────────────────
+
+  displayReferralLink(referralCode) {
+    const fullLink = this.linkBaseUrl + referralCode;
+    this.referralLinkInput.value = fullLink;
+    this.referralLinkInput.dataset.code = referralCode;
+
+    this.emailFormContainer.style.display = 'none';
+    this.loadingContainer.style.display = 'none';
+    this.linkDisplayContainer.style.display = 'block';
+    
+    this.referralLinkInput.focus();
+    this.referralLinkInput.select();
+  }
+
+  // ───────────────────────────────────────────────────────────────────────
+  // COPY TO CLIPBOARD
+  // ───────────────────────────────────────────────────────────────────────
+
+  async copyToClipboard() {
+    const link = this.referralLinkInput.value;
+
+    try {
+      await navigator.clipboard.writeText(link);
+      this.showCopiedFeedback();
+    } catch (err) {
+      console.error('Failed to copy:', err);
+      // Fallback for older browsers
+      this.fallbackCopy(link);
+    }
+  }
+
+  showCopiedFeedback() {
+    const originalIcon = this.copyBtn.innerHTML;
+    this.copyBtn.innerHTML = '<span id="copyIcon">✓</span>';
+    this.copyBtn.style.background = 'rgba(0, 230, 118, 0.2)';
+    this.copiedMessage.style.display = 'block';
+
+    setTimeout(() => {
+      this.copyBtn.innerHTML = originalIcon;
+      this.copyBtn.style.background = 'rgba(0, 230, 118, 0.1)';
+      this.copiedMessage.style.display = 'none';
+    }, 2000);
+  }
+
+  fallbackCopy(text) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+    this.showCopiedFeedback();
+  }
+
+  // ───────────────────────────────────────────────────────────────────────
+  // SHARE FUNCTIONALITY
+  // ───────────────────────────────────────────────────────────────────────
+
+  shareLink() {
+    const link = this.referralLinkInput.value;
+    const shareText = `Check out GoMagic! I'm earning money with this referral link: ${link}`;
+
+    if (navigator.share) {
+      navigator.share({
+        title: 'GoMagic Referral Link',
+        text: shareText,
+        url: link,
+      }).catch(err => console.log('Share cancelled:', err));
+    } else {
+      // Fallback: copy to clipboard if Web Share API not available
+      this.copyToClipboard();
+    }
+  }
+
+  // ───────────────────────────────────────────────────────────────────────
+  // URL PARAMETER FALLBACK
+  // ───────────────────────────────────────────────────────────────────────
+
+  checkUrlForExistingRef() {
+    const params = new URLSearchParams(window.location.search);
+    const refCode = params.get('ref');
+
+    if (refCode) {
+      // Pre-fill the modal with the ref code and display it
+      this.openModal();
+      setTimeout(() => {
+        this.displayReferralLink(refCode);
+      }, 300);
+    }
+  }
+}
+
+// Initialize on DOM ready
+document.addEventListener('DOMContentLoaded', () => {
+  new ReferralLinkManager();
+});
+
+// ═════════════════════════════════════════════════════════════════════════
+// EXISTING FUNCTIONALITY (PRESERVED)
+// ═════════════════════════════════════════════════════════════════════════
+
 // Scroll reveal
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(el => {
