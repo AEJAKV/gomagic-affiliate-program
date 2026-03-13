@@ -108,31 +108,7 @@ body::after {
   background: var(--green);
 }
 
-.eyebrow-separator {
-  color: var(--green);
-  opacity: 0.4;
-  font-size: 12px;
-  letter-spacing: 0;
-  margin: 0 6px;
-}
 
-.eyebrow-brand {
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.15em;
-  opacity: 0.7;
-  text-transform: uppercase;
-}
-
-@media (max-width: 600px) {
-  .eyebrow-separator {
-    display: none;
-  }
-  
-  .eyebrow-brand {
-    margin-left: 6px;
-  }
-}
 
 .hero-headline {
   font-family: 'Bebas Neue', sans-serif;
@@ -830,6 +806,12 @@ nav {
   transition: padding 0.3s;
 }
 
+.nav-logo-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .nav-logo {
   font-family: 'Bebas Neue', sans-serif;
   font-size: 26px;
@@ -839,6 +821,22 @@ nav {
 }
 
 .nav-logo span { color: var(--green); }
+
+.nav-brand {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--offwhite);
+  opacity: 0.6;
+}
+
+@media (max-width: 600px) {
+  .nav-brand {
+    display: none;
+  }
+}
 
 .nav-links {
   display: flex;
@@ -1240,7 +1238,10 @@ footer p { font-size: 13px; color: var(--offwhite); opacity: 0.45; }
 
 <!-- NAV -->
 <nav>
-  <a href="#" class="nav-logo">Go<span>Magic</span></a>
+  <div class="nav-logo-wrapper">
+    <a href="#" class="nav-logo">Go<span>Magic</span></a>
+    <span class="nav-brand">by GoLoans</span>
+  </div>
   <ul class="nav-links">
     <li><a href="#how">How It Works</a></li>
     <li><a href="#earnings">Earnings</a></li>
@@ -1252,11 +1253,7 @@ footer p { font-size: 13px; color: var(--offwhite); opacity: 0.45; }
 
 <!-- HERO -->
 <section class="hero">
-  <div class="hero-eyebrow">
-    GoMagic Affiliate Program
-    <span class="eyebrow-separator">|</span>
-    <span class="eyebrow-brand">by GoLoans</span>
-  </div>
+  <div class="hero-eyebrow">GoMagic Affiliate Program</div>
 
   <h1 class="hero-headline">
     <span class="line-green">Share a link.</span>
