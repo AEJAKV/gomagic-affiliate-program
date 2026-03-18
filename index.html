@@ -553,19 +553,15 @@ section { padding: 100px 6vw; }
 }
 
 .earn-card.featured::before {
-  content: 'TOP TIER';
+  content: '';
   position: absolute;
   top: -14px;
   left: 50%;
   transform: translateX(-50%);
+  width: 12px;
+  height: 12px;
   background: var(--green);
-  color: var(--black);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  padding: 6px 14px;
-  border-radius: 14px;
-  white-space: nowrap;
+  border-radius: 50%;
   z-index: 10;
   box-shadow: 0 4px 12px rgba(0, 230, 118, 0.3);
 }
