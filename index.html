@@ -1206,6 +1206,93 @@ footer p { font-size: 13px; color: var(--offwhite); opacity: 0.45; }
   font-size: 15px;
 }
 
+/* Social Media Sharing Styles */
+.social-sharing-section {
+  margin-top: 28px;
+  padding-top: 28px;
+  border-top: 1px solid rgba(0, 230, 118, 0.15);
+}
+
+.share-prompt {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--white);
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.social-icons-container {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  animation: fadeIn 0.5s ease 0.3s both;
+}
+
+.social-icon-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: transparent;
+  flex-shrink: 0;
+}
+
+.social-icon-btn:hover {
+  transform: translateY(-3px);
+}
+
+/* Facebook */
+.social-icon-btn.facebook {
+  color: #1877f2;
+  border-color: #1877f2;
+}
+
+.social-icon-btn.facebook:hover {
+  background: rgba(24, 119, 242, 0.1);
+  box-shadow: 0 8px 24px rgba(24, 119, 242, 0.25);
+}
+
+/* Instagram */
+.social-icon-btn.instagram {
+  color: #e4405f;
+  border-color: #e4405f;
+}
+
+.social-icon-btn.instagram:hover {
+  background: rgba(228, 64, 95, 0.1);
+  box-shadow: 0 8px 24px rgba(228, 64, 95, 0.25);
+}
+
+/* Twitter/X */
+.social-icon-btn.twitter {
+  color: #000;
+  border-color: #000;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.social-icon-btn.twitter:hover {
+  background: rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+/* WhatsApp */
+.social-icon-btn.whatsapp {
+  color: #25d366;
+  border-color: #25d366;
+}
+
+.social-icon-btn.whatsapp:hover {
+  background: rgba(37, 211, 102, 0.1);
+  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.25);
+}
+
 /* Mobile Responsive */
 @media (max-width: 600px) {
   .modal-content {
@@ -1589,6 +1676,25 @@ footer p { font-size: 13px; color: var(--offwhite); opacity: 0.45; }
       <div id="copiedMessage" class="copied-message" style="display: none;">✓ Copied to clipboard!</div>
 
       <button id="shareBtn" class="btn-share">Share This Link</button>
+
+      <!-- Social Media Sharing Section -->
+      <div id="socialSharingSection" class="social-sharing-section" style="display: none;">
+        <div class="share-prompt">Share this now</div>
+        <div class="social-icons-container">
+          <button type="button" class="social-icon-btn facebook" title="Share on Facebook" id="shareFacebook">
+            f
+          </button>
+          <button type="button" class="social-icon-btn instagram" title="Share on Instagram" id="shareInstagram">
+            📷
+          </button>
+          <button type="button" class="social-icon-btn twitter" title="Share on X (Twitter)" id="shareTwitter">
+            𝕏
+          </button>
+          <button type="button" class="social-icon-btn whatsapp" title="Share on WhatsApp" id="shareWhatsApp">
+            💬
+          </button>
+        </div>
+      </div>
       
       <p class="modal-footer-text">This is your unique link. Share it to earn commissions.</p>
     </div>
@@ -1617,7 +1723,7 @@ footer p { font-size: 13px; color: var(--offwhite); opacity: 0.45; }
 class ReferralLinkManager {
   constructor() {
     this.apiEndpoint = '/api/get-referral'; // Vercel API route
-    this.linkBaseUrl = 'https://goloans1.ac-page.com/referral?code=';
+    this.linkBaseUrl = 'https://offers.goloans.ca/gomagic/?code=';
     this.initElements();
     this.attachEventListeners();
     this.checkUrlForExistingRef();
@@ -1639,6 +1745,13 @@ class ReferralLinkManager {
     this.copyBtn = document.getElementById('copyBtn');
     this.copiedMessage = document.getElementById('copiedMessage');
     this.shareBtn = document.getElementById('shareBtn');
+    this.socialSharingSection = document.getElementById('socialSharingSection');
+    
+    // Social sharing buttons
+    this.shareFacebook = document.getElementById('shareFacebook');
+    this.shareInstagram = document.getElementById('shareInstagram');
+    this.shareTwitter = document.getElementById('shareTwitter');
+    this.shareWhatsApp = document.getElementById('shareWhatsApp');
   }
 
   attachEventListeners() {
@@ -1651,6 +1764,24 @@ class ReferralLinkManager {
     this.emailForm.addEventListener('submit', (e) => this.handleFormSubmit(e));
     this.copyBtn.addEventListener('click', () => this.copyToClipboard());
     this.shareBtn.addEventListener('click', () => this.shareLink());
+    
+    // Social media sharing buttons
+    this.shareFacebook.addEventListener('click', (e) => {
+      e.preventDefault();
+      this.shareToFacebook();
+    });
+    this.shareInstagram.addEventListener('click', (e) => {
+      e.preventDefault();
+      this.shareToInstagram();
+    });
+    this.shareTwitter.addEventListener('click', (e) => {
+      e.preventDefault();
+      this.shareToTwitter();
+    });
+    this.shareWhatsApp.addEventListener('click', (e) => {
+      e.preventDefault();
+      this.shareToWhatsApp();
+    });
     
     // Close modal on Escape key
     document.addEventListener('keydown', (e) => {
@@ -1682,6 +1813,7 @@ class ReferralLinkManager {
     this.emailFormContainer.style.display = 'block';
     this.linkDisplayContainer.style.display = 'none';
     this.loadingContainer.style.display = 'none';
+    this.socialSharingSection.style.display = 'none';
   }
 
   // ───────────────────────────────────────────────────────────────────────
@@ -1758,6 +1890,7 @@ class ReferralLinkManager {
     this.emailFormContainer.style.display = 'none';
     this.loadingContainer.style.display = 'none';
     this.linkDisplayContainer.style.display = 'block';
+    this.socialSharingSection.style.display = 'block';
     
     this.referralLinkInput.focus();
     this.referralLinkInput.select();
@@ -1821,6 +1954,37 @@ class ReferralLinkManager {
       // Fallback: copy to clipboard if Web Share API not available
       this.copyToClipboard();
     }
+  }
+
+  // ───────────────────────────────────────────────────────────────────────
+  // SOCIAL MEDIA SHARING FUNCTIONS
+  // ───────────────────────────────────────────────────────────────────────
+
+  shareToFacebook() {
+    const link = this.referralLinkInput.value;
+    const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(link)}`;
+    window.open(shareUrl, 'facebook-share', 'width=600,height=400');
+  }
+
+  shareToInstagram() {
+    const link = this.referralLinkInput.value;
+    // Instagram doesn't have a direct share API, so we'll copy and show a message or open the app
+    this.copyToClipboard();
+    alert('Link copied! Open Instagram and paste it in your story, post, or message. You can also scan the link in Instagram to share it.');
+  }
+
+  shareToTwitter() {
+    const link = this.referralLinkInput.value;
+    const text = encodeURIComponent('Join GoMagic and earn up to $100 per referral!');
+    const shareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(link)}&text=${text}`;
+    window.open(shareUrl, 'twitter-share', 'width=600,height=400');
+  }
+
+  shareToWhatsApp() {
+    const link = this.referralLinkInput.value;
+    const text = encodeURIComponent(`Check out GoMagic! I'm earning money with this referral link. Join me: ${link}`);
+    const shareUrl = `https://api.whatsapp.com/send?text=${text}`;
+    window.open(shareUrl, 'whatsapp-share', 'width=600,height=400');
   }
 
   // ───────────────────────────────────────────────────────────────────────
