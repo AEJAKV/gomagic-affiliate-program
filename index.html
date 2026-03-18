@@ -1237,6 +1237,66 @@ footer p { font-size: 13px; color: var(--offwhite); opacity: 0.45; }
   font-size: 15px;
 }
 
+/* Success State Styles */
+.success-container {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}
+
+.success-checkmark {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 24px;
+  animation: successScale 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.success-checkmark svg {
+  width: 100%;
+  height: 100%;
+  stroke: var(--green);
+  stroke-width: 2;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.success-checkmark svg .checkmark-path {
+  stroke-dasharray: 50;
+  stroke-dashoffset: 50;
+  animation: checkmarkDraw 0.6s ease 0.2s forwards;
+}
+
+@keyframes successScale {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes checkmarkDraw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.success-message {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--white);
+  text-align: center;
+  animation: fadeUp 0.5s ease 0.4s both;
+}
+
 /* Social Media Sharing Styles */
 .social-sharing-section {
   margin-top: 28px;
@@ -1737,6 +1797,17 @@ Or, just reply YES to our text message. We'll ask for your first name, then text
       <p>Generating your referral link...</p>
     </div>
 
+    <!-- Success State -->
+    <div id="successContainer" class="success-container" style="display: none;">
+      <div class="success-checkmark">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="45" stroke="var(--green)" stroke-width="2" fill="none" opacity="0.2"/>
+          <polyline class="checkmark-path" points="25,55 45,70 75,40" />
+        </svg>
+      </div>
+      <p class="success-message">Referral link generated</p>
+    </div>
+
     <button id="closeModalBtn" class="modal-close">✕</button>
   </div>
 </div>
@@ -1772,6 +1843,7 @@ class ReferralLinkManager {
     this.emailFormContainer = document.getElementById('emailFormContainer');
     this.linkDisplayContainer = document.getElementById('linkDisplayContainer');
     this.loadingContainer = document.getElementById('loadingContainer');
+    this.successContainer = document.getElementById('successContainer');
     
     this.referralLinkInput = document.getElementById('referralLinkInput');
     this.copyBtn = document.getElementById('copyBtn');
@@ -1845,6 +1917,7 @@ class ReferralLinkManager {
     this.emailFormContainer.style.display = 'block';
     this.linkDisplayContainer.style.display = 'none';
     this.loadingContainer.style.display = 'none';
+    this.successContainer.style.display = 'none';
     this.socialSharingSection.style.display = 'none';
   }
 
@@ -1884,7 +1957,13 @@ class ReferralLinkManager {
         throw new Error('No referral code received from server');
       }
 
-      this.displayReferralLink(referralCode);
+      // Show success state first, then display the link
+      this.showSuccess();
+      
+      // Display the actual link after success animation
+      setTimeout(() => {
+        this.displayReferralLink(referralCode);
+      }, 600);
     } catch (error) {
       console.error('Error:', error);
       this.showError(error.message || 'Failed to generate your referral link. Please try again.');
@@ -1899,7 +1978,19 @@ class ReferralLinkManager {
   showLoading() {
     this.emailFormContainer.style.display = 'none';
     this.linkDisplayContainer.style.display = 'none';
+    this.successContainer.style.display = 'none';
     this.loadingContainer.style.display = 'flex';
+  }
+
+  showSuccess() {
+    this.emailFormContainer.style.display = 'none';
+    this.loadingContainer.style.display = 'none';
+    this.successContainer.style.display = 'flex';
+    
+    // Show link display after success animation (600ms)
+    setTimeout(() => {
+      this.linkDisplayContainer.style.display = 'block';
+    }, 600);
   }
 
   showError(message) {
@@ -1919,8 +2010,7 @@ class ReferralLinkManager {
     this.referralLinkInput.value = fullLink;
     this.referralLinkInput.dataset.code = referralCode;
 
-    this.emailFormContainer.style.display = 'none';
-    this.loadingContainer.style.display = 'none';
+    this.successContainer.style.display = 'none';
     this.linkDisplayContainer.style.display = 'block';
     this.socialSharingSection.style.display = 'block';
     
