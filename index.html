@@ -539,6 +539,35 @@ section { padding: 100px 6vw; }
 
 .earn-card:hover::after { transform: scaleX(1); }
 
+/* Featured/Premium Card Styling */
+.earn-card.featured {
+  transform: scale(1.06);
+  border: 2px solid #00ff88;
+  box-shadow: 0 0 30px rgba(0, 255, 136, 0.3), 0 20px 50px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(0, 230, 118, 0.15);
+  background: linear-gradient(135deg, rgba(0, 230, 118, 0.08) 0%, transparent 100%);
+  position: relative;
+}
+
+.earn-card.featured:hover {
+  box-shadow: 0 0 40px rgba(0, 255, 136, 0.4), 0 25px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(0, 230, 118, 0.2);
+}
+
+.earn-card.featured::before {
+  content: 'TOP TIER';
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--green);
+  color: var(--black);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  padding: 4px 12px;
+  border-radius: 12px;
+  white-space: nowrap;
+}
+
 .earn-amount {
   font-family: 'Bebas Neue', sans-serif;
   font-size: 72px;
@@ -1465,10 +1494,10 @@ footer p { font-size: 13px; color: var(--offwhite); opacity: 0.45; }
   <p class="section-body reveal">The more your link gets used, the more you earn. Every stage of the loan process puts money in your pocket.</p>
 
   <div class="earn-grid reveal-group">
-    <div class="earn-card">
-      <div class="earn-amount">$2</div>
-      <div class="earn-trigger">Per Signup</div>
-      <div class="earn-desc">Every time someone clicks your link and signs up — $2 is yours. No loan needed.</div>
+    <div class="earn-card featured">
+      <div class="earn-amount">$100</div>
+      <div class="earn-trigger">Per $500+ Loan</div>
+      <div class="earn-desc">The top earner payout. One referral who takes a $500+ loan pays you $100. Instantly.</div>
     </div>
     <div class="earn-card">
       <div class="earn-amount">$50</div>
@@ -1476,9 +1505,9 @@ footer p { font-size: 13px; color: var(--offwhite); opacity: 0.45; }
       <div class="earn-desc">When someone you referred completes a $300 loan, you earn $50. That's a 16x multiplier.</div>
     </div>
     <div class="earn-card">
-      <div class="earn-amount">$100</div>
-      <div class="earn-trigger">Per $500+ Loan</div>
-      <div class="earn-desc">The top earner payout. One referral who takes a $500+ loan pays you $100. Instantly.</div>
+      <div class="earn-amount">$2</div>
+      <div class="earn-trigger">Per Signup</div>
+      <div class="earn-desc">Every time someone clicks your link and signs up — $2 is yours. No loan needed.</div>
     </div>
   </div>
 
