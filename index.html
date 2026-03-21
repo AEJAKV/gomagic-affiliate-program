@@ -1209,33 +1209,7 @@ footer p { font-size: 13px; color: var(--offwhite); opacity: 0.45; }
   margin-top: 20px;
 }
 
-/* Loading State */
-.loading-container {
-  display: flex !important;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 200px;
-}
 
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid rgba(0, 230, 118, 0.2);
-  border-top-color: var(--green);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  margin-bottom: 20px;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-.loading-container p {
-  color: var(--offwhite);
-  font-size: 15px;
-}
 
 /* Success State Styles */
 .success-container {
@@ -1791,11 +1765,7 @@ Or, just reply YES to our text message. We'll ask for your first name, then text
       <p class="modal-footer-text">This is your unique link. Share it to earn commissions.</p>
     </div>
 
-    <!-- Loading State -->
-    <div id="loadingContainer" class="loading-container" style="display: none;">
-      <div class="spinner"></div>
-      <p>Generating your referral link...</p>
-    </div>
+
 
     <!-- Success State -->
     <div id="successContainer" class="success-container" style="display: none;">
@@ -1842,7 +1812,6 @@ class ReferralLinkManager {
     
     this.emailFormContainer = document.getElementById('emailFormContainer');
     this.linkDisplayContainer = document.getElementById('linkDisplayContainer');
-    this.loadingContainer = document.getElementById('loadingContainer');
     this.successContainer = document.getElementById('successContainer');
     
     this.referralLinkInput = document.getElementById('referralLinkInput');
@@ -1916,7 +1885,6 @@ class ReferralLinkManager {
     this.errorMessage.style.display = 'none';
     this.emailFormContainer.style.display = 'block';
     this.linkDisplayContainer.style.display = 'none';
-    this.loadingContainer.style.display = 'none';
     this.successContainer.style.display = 'none';
     this.socialSharingSection.style.display = 'none';
   }
@@ -1933,8 +1901,6 @@ class ReferralLinkManager {
       this.showError('Please enter a valid email address.');
       return;
     }
-
-    this.showLoading();
     
     try {
       const response = await fetch(this.apiEndpoint, {
@@ -1975,16 +1941,8 @@ class ReferralLinkManager {
     return re.test(email);
   }
 
-  showLoading() {
-    this.emailFormContainer.style.display = 'none';
-    this.linkDisplayContainer.style.display = 'none';
-    this.successContainer.style.display = 'none';
-    this.loadingContainer.style.display = 'flex';
-  }
-
   showSuccess() {
     this.emailFormContainer.style.display = 'none';
-    this.loadingContainer.style.display = 'none';
     this.successContainer.style.display = 'flex';
     
     // Show link display after success animation (600ms)
@@ -1998,7 +1956,7 @@ class ReferralLinkManager {
     this.errorMessage.style.display = 'block';
     this.emailFormContainer.style.display = 'block';
     this.linkDisplayContainer.style.display = 'none';
-    this.loadingContainer.style.display = 'none';
+    this.successContainer.style.display = 'none';
   }
 
   // ───────────────────────────────────────────────────────────────────────
