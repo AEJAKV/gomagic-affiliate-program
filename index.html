@@ -1950,6 +1950,26 @@ Or, just reply YES to our text message. We'll ask for your first name, then text
 
 <script>
 // ═══════════════════════════════════════════════════════════════════════════
+// REFERRAL PARAMETER PERSISTENCE SYSTEM
+// ═══════════════════════════════════════════════════════════════════════════
+//
+// FEATURE: Referral Parameter Persistence
+// 
+// When a user arrives via a referral link (e.g., ?ref=Rodgen-268897):
+// 1. The page loads naturally WITHOUT forcing the modal open
+// 2. The referral code is silently captured from the URL
+// 3. The code is stored in localStorage for cross-session persistence
+// 4. If an ActiveCampaign form exists, its referrer fields are auto-populated
+// 5. When the user generates their own link, the original referrer gets credit
+//
+// Implementation:
+// - captureAndStoreReferralParameter(): Silently captures URL parameter
+// - populateACFormFields(): Finds and populates AC form hidden fields
+// - includeReferrerInApiPayload(): Adds referrer to API calls
+// - Debug command: window.referralManager.debugReferrerState()
+// - Clear referrer: window.referralManager.clearStoredReferrer()
+//
+// ═══════════════════════════════════════════════════════════════════════════
 // REFERRAL LINK LOOKUP SYSTEM
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -1957,9 +1977,11 @@ class ReferralLinkManager {
   constructor() {
     this.apiEndpoint = '/api/get-referral'; // Vercel API route
     this.linkBaseUrl = 'https://offers.goloans.ca/gomagic/?code=';
+    this.storageKey = 'gomagic_referrer_code';
     this.initElements();
     this.attachEventListeners();
-    this.checkUrlForExistingRef();
+    this.captureAndStoreReferralParameter();
+    this.populateACFormFields();
   }
 
   initElements() {
@@ -2063,12 +2085,15 @@ class ReferralLinkManager {
     }
     
     try {
+      // Include referrer code in the API payload if available
+      const payload = this.includeReferrerInApiPayload({ email });
+
       const response = await fetch(this.apiEndpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
@@ -2228,26 +2253,117 @@ class ReferralLinkManager {
   }
 
   // ───────────────────────────────────────────────────────────────────────
-  // URL PARAMETER FALLBACK
+  // REFERRAL PARAMETER PERSISTENCE
   // ───────────────────────────────────────────────────────────────────────
 
-  checkUrlForExistingRef() {
+  /**
+   * Capture ref parameter from URL and store silently (don't open modal)
+   * Load stored ref from localStorage if available
+   */
+  captureAndStoreReferralParameter() {
+    // First check URL for ref parameter
     const params = new URLSearchParams(window.location.search);
-    const refCode = params.get('ref');
+    const urlRefCode = params.get('ref');
 
-    if (refCode) {
-      // Pre-fill the modal with the ref code and display it
-      this.openModal();
-      setTimeout(() => {
-        this.displayReferralLink(refCode);
-      }, 300);
+    if (urlRefCode) {
+      // Store the referrer code in localStorage
+      localStorage.setItem(this.storageKey, urlRefCode);
+      console.log(`[GoMagic] Referrer captured from URL: ${urlRefCode}`);
+    } else {
+      // Check if there's already a stored referrer code
+      const storedRefCode = localStorage.getItem(this.storageKey);
+      if (storedRefCode) {
+        console.log(`[GoMagic] Referrer loaded from storage: ${storedRefCode}`);
+      }
     }
+  }
+
+  /**
+   * Get the stored referrer code
+   */
+  getStoredReferrerCode() {
+    return localStorage.getItem(this.storageKey);
+  }
+
+  /**
+   * Populate ActiveCampaign form with referrer code
+   * Looks for hidden field named 'referrer_code' or similar
+   */
+  populateACFormFields() {
+    // Look for ActiveCampaign form on the page
+    const acForm = document.querySelector('.ac-form') || 
+                   document.querySelector('[data-form-id]') ||
+                   document.querySelector('form[action*="activehosted"]');
+
+    if (acForm) {
+      const referrerCode = this.getStoredReferrerCode();
+      if (referrerCode) {
+        // Look for existing hidden field
+        let referrerField = acForm.querySelector('input[name="referrer_code"]') ||
+                           acForm.querySelector('input[name="referrer_code_capture"]') ||
+                           acForm.querySelector('input[name="ac_referrer"]');
+
+        if (referrerField) {
+          // Field exists, populate it
+          referrerField.value = referrerCode;
+          console.log(`[GoMagic] AC form field populated with: ${referrerCode}`);
+        } else {
+          // Create hidden field if it doesn't exist
+          const hiddenInput = document.createElement('input');
+          hiddenInput.type = 'hidden';
+          hiddenInput.name = 'referrer_code_capture';
+          hiddenInput.value = referrerCode;
+          acForm.appendChild(hiddenInput);
+          console.log(`[GoMagic] Created hidden referrer field: ${referrerCode}`);
+        }
+      }
+    } else {
+      console.log('[GoMagic] No AC form found on page');
+    }
+  }
+
+  /**
+   * Include referrer code in API payload when generating link
+   */
+  includeReferrerInApiPayload(emailData) {
+    const referrerCode = this.getStoredReferrerCode();
+    if (referrerCode) {
+      return {
+        ...emailData,
+        referrer_code: referrerCode,
+        referred_by: referrerCode
+      };
+    }
+    return emailData;
+  }
+
+  /**
+   * Clear stored referrer code from localStorage
+   * Useful if user wants to generate a fresh link without referrer attribution
+   */
+  clearStoredReferrer() {
+    localStorage.removeItem(this.storageKey);
+    console.log('[GoMagic] Stored referrer code cleared');
+  }
+
+  /**
+   * Debug utility: Log current referrer state
+   */
+  debugReferrerState() {
+    const stored = this.getStoredReferrerCode();
+    const params = new URLSearchParams(window.location.search);
+    const urlRef = params.get('ref');
+    console.log('[GoMagic] Debug Info:', {
+      storedReferrer: stored || 'none',
+      urlParameter: urlRef || 'none',
+      localStorage: window.localStorage ? 'available' : 'unavailable'
+    });
   }
 }
 
 // Initialize on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
-  new ReferralLinkManager();
+  window.referralManager = new ReferralLinkManager();
 });
 
 // ═════════════════════════════════════════════════════════════════════════
