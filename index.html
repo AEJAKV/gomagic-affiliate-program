@@ -1030,12 +1030,14 @@ footer p { font-size: 13px; color: var(--offwhite); opacity: 0.45; }
   color: var(--white);
   margin-bottom: 8px;
   letter-spacing: 0.01em;
+  line-height: 1.3;
 }
 
 .modal-header p {
   font-size: 14px;
   color: var(--offwhite);
-  opacity: 0.7;
+  opacity: 0.8;
+  line-height: 1.6;
 }
 
 /* Form Styles */
@@ -1043,6 +1045,7 @@ footer p { font-size: 13px; color: var(--offwhite); opacity: 0.45; }
 .link-container,
 .loading-container {
   text-align: center;
+  width: 100%;
 }
 
 .form-group {
@@ -1059,6 +1062,7 @@ footer p { font-size: 13px; color: var(--offwhite); opacity: 0.45; }
   font-size: 15px;
   border-radius: 8px;
   transition: all 0.2s;
+  line-height: 1.5;
 }
 
 .form-input::placeholder {
@@ -1086,6 +1090,7 @@ footer p { font-size: 13px; color: var(--offwhite); opacity: 0.45; }
   transition: all 0.2s;
   font-family: 'DM Sans', sans-serif;
   letter-spacing: 0.02em;
+  line-height: 1.5;
 }
 
 .btn-submit:hover {
@@ -1122,6 +1127,8 @@ footer p { font-size: 13px; color: var(--offwhite); opacity: 0.45; }
   font-size: 14px;
   border-radius: 8px;
   cursor: text;
+  line-height: 1.5;
+  word-break: break-all;
 }
 
 .link-input:focus {
@@ -1143,6 +1150,7 @@ footer p { font-size: 13px; color: var(--offwhite); opacity: 0.45; }
   align-items: center;
   justify-content: center;
   min-width: 50px;
+  line-height: 1;
 }
 
 .copy-btn:hover {
@@ -1183,6 +1191,7 @@ footer p { font-size: 13px; color: var(--offwhite); opacity: 0.45; }
   font-family: 'DM Sans', sans-serif;
   letter-spacing: 0.02em;
   margin: 16px 0;
+  line-height: 1.5;
 }
 
 .btn-share:hover {
@@ -1200,13 +1209,15 @@ footer p { font-size: 13px; color: var(--offwhite); opacity: 0.45; }
   font-size: 13px;
   margin-bottom: 16px;
   animation: slideUp 0.3s ease;
+  line-height: 1.5;
 }
 
 .modal-footer-text {
   font-size: 12px;
   color: var(--offwhite);
-  opacity: 0.5;
+  opacity: 0.6;
   margin-top: 20px;
+  line-height: 1.5;
 }
 
 
@@ -1269,6 +1280,7 @@ footer p { font-size: 13px; color: var(--offwhite); opacity: 0.45; }
   color: var(--white);
   text-align: center;
   animation: fadeUp 0.5s ease 0.4s both;
+  line-height: 1.5;
 }
 
 /* Social Media Sharing Styles */
@@ -1284,6 +1296,7 @@ footer p { font-size: 13px; color: var(--offwhite); opacity: 0.45; }
   color: var(--white);
   margin-bottom: 16px;
   text-align: center;
+  line-height: 1.5;
 }
 
 .social-icons-container {
@@ -1307,6 +1320,7 @@ footer p { font-size: 13px; color: var(--offwhite); opacity: 0.45; }
   transition: all 0.3s ease;
   background: transparent;
   flex-shrink: 0;
+  line-height: 1;
 }
 
 .social-icon-btn:hover {
@@ -1360,22 +1374,168 @@ footer p { font-size: 13px; color: var(--offwhite); opacity: 0.45; }
 
 /* Mobile Responsive */
 @media (max-width: 600px) {
+  /* Modal fixes */
+  .modal-overlay {
+    padding: 20px;
+  }
+
   .modal-content {
-    padding: 36px 24px;
-    margin: 20px;
+    padding: 32px 24px;
+    margin: 0;
+    max-width: 100%;
+    width: 100%;
+    border-radius: 12px;
+    max-height: 90vh;
+    overflow-y: auto;
   }
   
+  .modal-header {
+    margin-bottom: 28px;
+  }
+
   .modal-header h2 {
-    font-size: 24px;
+    font-size: 26px;
+    margin-bottom: 12px;
+  }
+
+  .modal-header p {
+    font-size: 15px;
+    line-height: 1.5;
   }
   
+  /* Form improvements */
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-input {
+    padding: 16px 16px;
+    font-size: 16px;
+    border-radius: 10px;
+  }
+
+  .form-input::placeholder {
+    font-size: 15px;
+  }
+
+  .btn-submit {
+    padding: 16px 24px;
+    font-size: 16px;
+    border-radius: 10px;
+    margin-top: 8px;
+  }
+
+  /* Link display improvements */
   .referral-link-box {
     flex-direction: column;
+    gap: 12px;
+    margin: 28px 0;
+  }
+
+  .link-input {
+    padding: 14px 14px;
+    font-size: 13px;
+    border-radius: 10px;
+    word-break: break-all;
   }
   
   .copy-btn {
     width: 100%;
     min-width: unset;
+    padding: 14px 20px;
+    font-size: 16px;
+    border-radius: 10px;
+  }
+
+  /* Share button improvements */
+  .btn-share {
+    padding: 14px 24px;
+    font-size: 15px;
+    border-radius: 10px;
+    margin: 20px 0;
+  }
+
+  /* Social icons improvements */
+  .social-icons-container {
+    gap: 14px;
+    margin: 20px 0;
+  }
+
+  .social-icon-btn {
+    width: 52px;
+    height: 52px;
+    font-size: 24px;
+  }
+
+  /* Success checkmark sizing */
+  .success-checkmark {
+    width: 70px;
+    height: 70px;
+    margin-bottom: 20px;
+  }
+
+  .success-message {
+    font-size: 18px;
+  }
+
+  /* Modal footer text */
+  .modal-footer-text {
+    font-size: 13px;
+    margin-top: 16px;
+  }
+
+  /* Error message */
+  .error-message {
+    font-size: 14px;
+    padding: 14px 14px;
+  }
+
+  /* Copied message */
+  .copied-message {
+    font-size: 14px;
+    margin: 14px 0;
+  }
+
+  /* Close button */
+  .modal-close {
+    top: 16px;
+    right: 16px;
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+  .modal-content {
+    padding: 28px 20px;
+  }
+
+  .modal-header h2 {
+    font-size: 24px;
+  }
+
+  .modal-header p {
+    font-size: 14px;
+  }
+
+  .form-input,
+  .btn-submit,
+  .link-input,
+  .copy-btn,
+  .btn-share {
+    font-size: 16px;
+  }
+
+  .link-input {
+    font-size: 12px;
+  }
+
+  .social-icon-btn {
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
   }
 }
 </style>
