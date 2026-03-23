@@ -2010,7 +2010,7 @@ class ReferralLinkManager {
   }
 
   attachEventListeners() {
-    this.getLinkBtn.addEventListener('click', () => this.openModal());
+    this.getLinkBtn.addEventListener('click', () => this.handleGetLinkButtonClick());
     this.closeModalBtn.addEventListener('click', () => this.closeModal());
     this.modal.addEventListener('click', (e) => {
       if (e.target === this.modal) this.closeModal();
@@ -2069,6 +2069,75 @@ class ReferralLinkManager {
     this.linkDisplayContainer.style.display = 'none';
     this.successContainer.style.display = 'none';
     this.socialSharingSection.style.display = 'none';
+  }
+
+  // ───────────────────────────────────────────────────────────────────────
+  // INTELLIGENT BUTTON HANDLER: EXISTING AFFILIATE vs NEW USER
+  // ───────────────────────────────────────────────────────────────────────
+
+  /**
+   * Smart button handler that checks for existing referrer parameter
+   * 
+   * Existing Affiliates (with ?ref= parameter):
+   * - Immediately shows success state with their personalized link
+   * - No API call needed, no email input required
+   * 
+   * New Users (no ref parameter):
+   * - Opens modal with email input form
+   * - Allows them to generate their first referral code via API
+   */
+  handleGetLinkButtonClick() {
+    // Check for ref parameter in URL
+    const params = new URLSearchParams(window.location.search);
+    const existingRefCode = params.get('ref');
+
+    if (existingRefCode) {
+      // Path 1: Existing Affiliate - Show instant success state
+      this.showInstantSuccessForAffiliate(existingRefCode);
+    } else {
+      // Path 2: New User - Show email form for code generation
+      this.openModal();
+    }
+  }
+
+  /**
+   * Display instant success state for existing affiliates
+   * Shows generated link immediately without any API call
+   * 
+   * @param {string} refCode - The referrer code from URL parameter (e.g., "Rodgen-268897")
+   */
+  showInstantSuccessForAffiliate(refCode) {
+    // Open modal first
+    this.modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+
+    // Reset form state and hide email form
+    this.emailFormContainer.style.display = 'none';
+    this.linkDisplayContainer.style.display = 'none';
+    this.successContainer.style.display = 'flex';
+    this.socialSharingSection.style.display = 'none';
+
+    console.log(`[GoMagic] Existing affiliate detected. Generating instant link for: ${refCode}`);
+
+    // Show success animation
+    setTimeout(() => {
+      // Construct full link: https://offers.goloans.ca/gomagic/?code={refCode}
+      const fullLink = this.linkBaseUrl + refCode;
+      
+      // Populate the link display
+      this.referralLinkInput.value = fullLink;
+      this.referralLinkInput.dataset.code = refCode;
+
+      // Show link container and social sharing section
+      this.linkDisplayContainer.style.display = 'block';
+      this.socialSharingSection.style.display = 'block';
+
+      // Auto-select the link for easy copy
+      this.referralLinkInput.focus();
+      this.referralLinkInput.select();
+
+      console.log(`[GoMagic] Instant success state displayed. Link: ${fullLink}`);
+    }, 600); // Match the success animation duration
   }
 
   // ───────────────────────────────────────────────────────────────────────
