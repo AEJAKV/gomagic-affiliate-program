@@ -861,6 +861,27 @@ nav {
   text-transform: uppercase;
   color: var(--offwhite);
   opacity: 0.6;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-brand img {
+  height: 14px;
+  width: auto;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+  vertical-align: middle;
+}
+
+.nav-brand:hover img {
+  opacity: 1;
+}
+
+@media (max-width: 600px) {
+  .nav-brand img {
+    height: 12px;
+  }
 }
 
 .nav-links {
@@ -1546,7 +1567,7 @@ footer p { font-size: 13px; color: var(--offwhite); opacity: 0.45; }
 <nav>
   <div class="nav-logo-wrapper">
     <a href="#" class="nav-logo">Go<span>Magic</span></a>
-    <span class="nav-brand">by GoLoans</span>
+    <span class="nav-brand">by <img src="/GoLoans-logo.png" alt="GoLoans" title="Presented by GoLoans"></span>
   </div>
   <ul class="nav-links">
     <li><a href="#how">How It Works</a></li>
