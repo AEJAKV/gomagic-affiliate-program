@@ -179,21 +179,78 @@ nav {
   animation: fadeUp 0.7s ease 0.45s forwards;
 }
 
-/* ─── MEDIA GRID (video + image) ─── */
-.share-media {
-  display: grid;
-  grid-template-columns: 1.3fr 1fr;
+/* ─── SHARE STEPS ─── */
+.share-steps {
+  display: flex;
+  flex-direction: column;
   gap: 24px;
-  align-items: start;
   width: 100%;
-  max-width: 1000px;
-  margin-bottom: 48px;
+  max-width: 960px;
   opacity: 0;
   animation: fadeUp 0.7s ease 0.6s forwards;
 }
 
-@media (max-width: 820px) {
-  .share-media { grid-template-columns: 1fr; }
+.share-step {
+  background: linear-gradient(145deg, rgba(30,36,32,0.96), rgba(8,10,7,0.92));
+  border: 1px solid rgba(0,230,118,0.16);
+  border-radius: 18px;
+  padding: 30px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.24);
+}
+
+.step-header {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 18px;
+  align-items: start;
+  margin-bottom: 24px;
+}
+
+.step-number {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,230,118,0.12);
+  border: 1px solid rgba(0,230,118,0.3);
+  color: var(--green);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  line-height: 1;
+}
+
+.step-title {
+  font-size: clamp(22px, 3vw, 34px);
+  font-weight: 700;
+  line-height: 1.12;
+  margin-bottom: 8px;
+}
+
+.step-desc {
+  font-size: 15px;
+  color: var(--offwhite);
+  line-height: 1.65;
+  opacity: 0.74;
+}
+
+.step-content {
+  width: 100%;
+}
+
+.step-media {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.step-media.image-media {
+  max-width: 540px;
+}
+
+@media (max-width: 640px) {
+  .share-step { padding: 22px; }
+  .step-header { grid-template-columns: 1fr; gap: 12px; }
 }
 
 .media-card {
@@ -484,53 +541,80 @@ footer p { font-size: 13px; color: var(--offwhite); opacity: 0.45; }
   </h1>
 
   <p class="share-sub">
-    This is your page to share. Send the video and image below to your friends with your personal link.
-    Every time someone signs up and takes a loan through it, you earn — up to $100 per referral.
+    Follow these three quick steps to copy your link, download your QR image, and save the referral video.
+    Every asset uses your personal VIP link automatically.
   </p>
 
-  <!-- MEDIA: video + image placeholders -->
-  <div class="share-media">
-    <div class="media-card">
-      <span class="media-label">Video</span>
-      <div class="video-embed">
-        <wistia-player media-id="car788u54u" seo="false" aspect="1.7777777777777777"></wistia-player>
+  <div class="share-steps">
+    <article class="share-step">
+      <div class="step-header">
+        <div class="step-number">1</div>
+        <div>
+          <h2 class="step-title">Copy your personal link</h2>
+          <p class="step-desc">Copy your personal referral link or share it directly with friends.</p>
+        </div>
       </div>
-      <div class="media-actions">
-        <a href="https://fast.wistia.com/embed/medias/car788u54u.bin" class="download-btn" download="gomagic-share-video.mp4">⬇ Download Video</a>
+
+      <div class="step-content">
+        <div class="link-row">
+          <div class="link-input" id="referralLink">https://goloans.ca/r/your-magic-link</div>
+          <button class="copy-btn" id="copyBtn" type="button">📋 Copy Link</button>
+        </div>
+
+        <div class="share-targets">
+          <a href="#" class="share-target" data-channel="sms">💬 Text</a>
+          <a href="#" class="share-target" data-channel="whatsapp">🟢 WhatsApp</a>
+          <a href="#" class="share-target" data-channel="facebook">📘 Facebook</a>
+          <a href="#" class="share-target" data-channel="email">✉️ Email</a>
+        </div>
       </div>
-    </div>
+    </article>
 
-    <div class="media-card">
-      <span class="media-label">Image</span>
-      <div class="social-image-wrap">
-        <img src="img/socials-image.jpg" alt="GoLoans offer — scan the QR or visit your personal link" class="social-image" crossorigin="anonymous">
-        <div class="qr-overlay" id="qrOverlay"></div>
-        <div class="link-overlay" id="linkOverlay"></div>
+    <article class="share-step">
+      <div class="step-header">
+        <div class="step-number">2</div>
+        <div>
+          <h2 class="step-title">Download the QR image</h2>
+          <p class="step-desc">Download your QR image so people can scan and open your personal link.</p>
+        </div>
       </div>
-      <div class="media-actions">
-        <button type="button" class="download-btn" id="downloadImgBtn">⬇ Download Image</button>
+
+      <div class="step-content step-media image-media">
+        <div class="media-card">
+          <span class="media-label">Image</span>
+          <div class="social-image-wrap">
+            <img src="img/socials-image.jpg" alt="GoLoans offer — scan the QR or visit your personal link" class="social-image" crossorigin="anonymous">
+            <div class="qr-overlay" id="qrOverlay"></div>
+            <div class="link-overlay" id="linkOverlay"></div>
+          </div>
+          <div class="media-actions">
+            <button type="button" class="download-btn" id="downloadImgBtn">⬇ Download Image</button>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
+    </article>
 
-  <!-- LINK CARD -->
-  <div class="link-card">
-    <div class="link-card-title">Your Personal Link</div>
-    <div class="link-row">
-      <div class="link-input" id="referralLink">https://goloans.ca/r/your-magic-link</div>
-      <button class="copy-btn" id="copyBtn" type="button">📋 Copy Link</button>
-    </div>
+    <article class="share-step">
+      <div class="step-header">
+        <div class="step-number">3</div>
+        <div>
+          <h2 class="step-title">Download the referral video</h2>
+          <p class="step-desc">Download the ready-made video and post it with your personal link.</p>
+        </div>
+      </div>
 
-    <div class="share-targets">
-      <a href="#" class="share-target" data-channel="sms">💬 Text</a>
-      <a href="#" class="share-target" data-channel="whatsapp">🟢 WhatsApp</a>
-      <a href="#" class="share-target" data-channel="facebook">📘 Facebook</a>
-      <a href="#" class="share-target" data-channel="email">✉️ Email</a>
-    </div>
-
-    <p class="share-note">
-      Your friends get 100% off interest and a $25 gift card. You look like a hero — and get paid every Friday.
-    </p>
+      <div class="step-content step-media">
+        <div class="media-card">
+          <span class="media-label">Video</span>
+          <div class="video-embed">
+            <wistia-player media-id="car788u54u" seo="false" aspect="1.7777777777777777"></wistia-player>
+          </div>
+          <div class="media-actions">
+            <a href="https://fast.wistia.com/embed/medias/car788u54u.bin" class="download-btn" download="gomagic-share-video.mp4">⬇ Download Video</a>
+          </div>
+        </div>
+      </div>
+    </article>
   </div>
 </section>
 
