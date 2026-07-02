@@ -155,6 +155,12 @@ body::after {
   -webkit-text-stroke: 0px;
 }
 
+@media (min-width: 601px) {
+  .hero-headline .line-green {
+    white-space: nowrap;
+  }
+}
+
 .hero-headline .line-make {
   display: block;
   color: #ffffff;
@@ -1184,6 +1190,18 @@ footer p { font-size: 13px; color: var(--offwhite); opacity: 0.45; }
   .hero { padding: 100px 6vw 60px; }
   .hero-headline { font-size: 18vw; }
   .hero-inner { min-height: auto; }
+  .hero-cta-row {
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+  }
+  .btn-secondary {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
   .hero-video-placeholder {
     min-height: 220px;
     border-radius: 22px;
@@ -1870,9 +1888,9 @@ footer p { font-size: 13px; color: var(--offwhite); opacity: 0.45; }
       <div class="hero-eyebrow">GoMagic Affiliate Program</div>
 
       <h1 class="hero-headline">
-        <span class="line-green">Share a link.</span>
-        <span class="line-make">Make <span class="line-hundred">$100.</span></span>
-        <span class="line-outline">Repeat.</span>
+        <span class="line-green">Share a Link</span>
+        <span class="line-make">Make <span class="line-hundred">$100</span></span>
+        <span class="line-outline">Repeat!</span>
       </h1>
 
       <p class="hero-sub">
