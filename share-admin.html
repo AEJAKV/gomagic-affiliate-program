@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Share Admin — GoMagic Affiliate Analytics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --black: #080a07;
+  --green: #00e676;
+  --green-dim: #00c853;
+  --green-glow: rgba(0,230,118,0.18);
+  --white: #f0f4ef;
+  --offwhite: #c8d4c6;
+  --gray: #3a4038;
+  --gray2: #1e2420;
+  --gold: #ffc107;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--black);
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* ─── NOISE OVERLAY ─── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.4;
+}
+
+/* ─── NAV ─── */
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 6vw;
+  background: rgba(8,10,7,0.7);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.nav-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 26px;
+  letter-spacing: 0.04em;
+  color: var(--white);
+  text-decoration: none;
+}
+
+.nav-logo span { color: var(--green); }
+
+.nav-tag {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--green);
+  border: 1px solid rgba(0,230,118,0.3);
+  background: rgba(0,230,118,0.08);
+  padding: 5px 12px;
+  border-radius: 50px;
+}
+
+.nav-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(160deg, #4dce6f 0%, #1aa845 100%);
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 10px 22px;
+  border-radius: 50px;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 16px rgba(0,180,70,0.3);
+  border: none;
+  cursor: pointer;
+}
+
+.nav-cta:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0,200,80,0.4); }
+
+/* ─── LAYOUT ─── */
+.admin {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 130px 6vw 80px;
+}
+
+.admin-head { margin-bottom: 36px; }
+
+.admin-eyebrow {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-eyebrow::before {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 2px;
+  background: var(--green);
+  opacity: 0.6;
+}
+
+.admin-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(42px, 7vw, 76px);
+  line-height: 0.95;
+  letter-spacing: 0.01em;
+  color: #ffffff;
+}
+
+.admin-sub {
+  font-size: 16px;
+  color: var(--offwhite);
+  opacity: 0.75;
+  margin-top: 10px;
+  max-width: 640px;
+  line-height: 1.6;
+}
+
+/* ─── SUMMARY CARDS ─── */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 18px;
+  margin-bottom: 34px;
+}
+
+.card {
+  background: linear-gradient(145deg, rgba(30,36,32,0.96), rgba(8,10,7,0.92));
+  border: 1px solid rgba(0,230,118,0.16);
+  border-radius: 18px;
+  padding: 26px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.24);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.25s, border-color 0.25s;
+}
+
+.card:hover { transform: translateY(-3px); border-color: rgba(0,230,118,0.4); }
+
+.card-icon {
+  font-size: 22px;
+  margin-bottom: 14px;
+  display: inline-flex;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: rgba(0,230,118,0.1);
+  border: 1px solid rgba(0,230,118,0.25);
+}
+
+.card-value {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 52px;
+  line-height: 1;
+  color: #ffffff;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--offwhite);
+  opacity: 0.7;
+}
+
+.card.total { border-color: rgba(255,193,7,0.35); }
+.card.total .card-icon { background: rgba(255,193,7,0.12); border-color: rgba(255,193,7,0.3); }
+.card.total .card-value { color: var(--gold); }
+
+/* ─── FILTERS ─── */
+.filters {
+  background: var(--gray2);
+  border: 1px solid rgba(0,230,118,0.14);
+  border-radius: 16px;
+  padding: 22px;
+  margin-bottom: 26px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  align-items: end;
+}
+
+.field { display: flex; flex-direction: column; gap: 7px; }
+
+.field label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--offwhite);
+  opacity: 0.7;
+}
+
+.field input,
+.field select {
+  background: var(--black);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 11px 14px;
+  font-size: 14px;
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  transition: border-color 0.2s;
+}
+
+.field input:focus,
+.field select:focus {
+  outline: none;
+  border-color: rgba(0,230,118,0.5);
+}
+
+.field select option { background: var(--gray2); }
+
+.filters-actions {
+  display: flex;
+  gap: 10px;
+  grid-column: 1 / -1;
+  flex-wrap: wrap;
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--black);
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 11px 20px;
+  border-radius: 50px;
+  border: 1px solid rgba(0,230,118,0.3);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, transform 0.2s;
+}
+
+.btn-ghost:hover {
+  background: rgba(0,230,118,0.08);
+  border-color: rgba(0,230,118,0.55);
+  transform: translateY(-1px);
+}
+
+.btn-ghost.danger { border-color: rgba(255,80,80,0.35); }
+.btn-ghost.danger:hover { background: rgba(255,80,80,0.1); border-color: rgba(255,80,80,0.6); }
+
+/* ─── TABLE ─── */
+.table-wrap {
+  background: var(--gray2);
+  border: 1px solid rgba(0,230,118,0.14);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.table-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.table-head h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 26px;
+  letter-spacing: 0.02em;
+}
+
+.result-count {
+  font-size: 13px;
+  color: var(--offwhite);
+  opacity: 0.7;
+}
+
+.table-scroll { overflow-x: auto; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  min-width: 720px;
+}
+
+thead th {
+  text-align: left;
+  padding: 14px 18px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--offwhite);
+  opacity: 0.8;
+  background: rgba(0,0,0,0.35);
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+thead th:hover { color: var(--green); }
+
+thead th .arrow { opacity: 0.4; font-size: 10px; margin-left: 4px; }
+thead th.sorted .arrow { opacity: 1; color: var(--green); }
+
+tbody td {
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  color: var(--white);
+  vertical-align: middle;
+}
+
+tbody tr:hover { background: rgba(0,230,118,0.04); }
+
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12.5px;
+  color: var(--offwhite);
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 50px;
+  border: 1px solid rgba(0,230,118,0.3);
+  background: rgba(0,230,118,0.08);
+  color: var(--green);
+  white-space: nowrap;
+}
+
+.pill.image_download { border-color: rgba(0,230,118,0.35); background: rgba(0,230,118,0.1); color: var(--green); }
+.pill.video_download { border-color: rgba(255,193,7,0.35); background: rgba(255,193,7,0.1); color: var(--gold); }
+.pill.referral_copy  { border-color: rgba(120,170,255,0.4); background: rgba(120,170,255,0.12); color: #9dc0ff; }
+.pill.share_click,
+.pill.asset_view,
+.pill.qr_scan { border-color: rgba(200,212,198,0.3); background: rgba(200,212,198,0.08); color: var(--offwhite); }
+
+.empty {
+  padding: 60px 22px;
+  text-align: center;
+  color: var(--offwhite);
+  opacity: 0.6;
+}
+
+.empty .big { font-size: 40px; margin-bottom: 12px; }
+
+.empty a { color: var(--green); }
+
+/* ─── FOOTER ─── */
+footer {
+  background: var(--gray2);
+  padding: 34px 6vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  margin-top: 60px;
+}
+
+footer p { font-size: 13px; color: var(--offwhite); opacity: 0.45; }
+
+@media (max-width: 640px) {
+  .admin { padding-top: 110px; }
+  .card-value { font-size: 42px; }
+}
+
+/* ─── LOGIN GATE ─── */
+.login-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background:
+    linear-gradient(135deg, rgba(6,26,13,0.96) 0%, rgba(13,61,34,0.94) 55%, rgba(20,92,53,0.9) 100%),
+    url('img/gomagic-hero-bg.svg') center / cover no-repeat;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  background: linear-gradient(145deg, rgba(30,36,32,0.98), rgba(8,10,7,0.96));
+  border: 1px solid rgba(0,230,118,0.2);
+  border-radius: 20px;
+  padding: 40px 34px;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.45);
+}
+
+.login-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 30px;
+  letter-spacing: 0.04em;
+  color: var(--white);
+  text-align: center;
+  margin-bottom: 6px;
+}
+.login-logo span { color: var(--green); }
+
+.login-eyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--green);
+  text-align: center;
+  margin-bottom: 26px;
+}
+
+.login-card .field { margin-bottom: 16px; }
+
+.login-card input {
+  background: var(--black);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 13px 15px;
+  font-size: 15px;
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+.login-card input:focus { outline: none; border-color: rgba(0,230,118,0.55); }
+
+.login-btn {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(160deg, #4dce6f 0%, #1aa845 100%);
+  color: #ffffff;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 14px 22px;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  margin-top: 8px;
+  box-shadow: 0 6px 20px rgba(0,180,70,0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.login-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(0,200,80,0.45); }
+
+.login-error {
+  display: none;
+  color: #ff7b7b;
+  font-size: 13px;
+  text-align: center;
+  margin-top: 14px;
+}
+.login-error.show { display: block; }
+
+.app-hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN GATE -->
+<div class="login-overlay" id="loginOverlay">
+  <form class="login-card" id="loginForm" autocomplete="off">
+    <div class="login-logo">Go<span>Magic</span></div>
+    <div class="login-eyebrow">Share Admin · Log In</div>
+    <div class="field">
+      <input type="text" id="loginUser" placeholder="Username" autocomplete="username" required>
+    </div>
+    <div class="field">
+      <input type="password" id="loginPass" placeholder="Password" autocomplete="current-password" required>
+    </div>
+    <button class="login-btn" type="submit">🔒 Log In</button>
+    <div class="login-error" id="loginError">Incorrect username or password.</div>
+  </form>
+</div>
+
+<!-- NAV -->
+<nav class="app-hidden" id="appNav">
+  <a href="index.html" class="nav-logo">Go<span>Magic</span> <span class="nav-tag" style="color:var(--green)">Admin</span></a>
+  <button class="nav-cta" id="logoutBtn" type="button">⎋ Log Out</button>
+</nav>
+
+<!-- ADMIN -->
+<main class="admin app-hidden" id="appMain">
+  <header class="admin-head">
+    <div class="admin-eyebrow">Share Analytics</div>
+    <h1 class="admin-title">Share Admin</h1>
+    <p class="admin-sub">Monitor how referred users engage with the Share Page — asset downloads and referral link shares, tracked in real time.</p>
+  </header>
+
+  <!-- SUMMARY CARDS -->
+  <section class="cards" id="cards"></section>
+
+  <!-- FILTERS -->
+  <section class="filters">
+    <div class="field">
+      <label for="search">Search</label>
+      <input type="text" id="search" placeholder="Search user, referrer, asset…" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="filterReferrer">Referrer</label>
+      <select id="filterReferrer"><option value="">All referrers</option></select>
+    </div>
+    <div class="field">
+      <label for="filterUser">User</label>
+      <select id="filterUser"><option value="">All users</option></select>
+    </div>
+    <div class="field">
+      <label for="filterAction">Action type</label>
+      <select id="filterAction"><option value="">All actions</option></select>
+    </div>
+    <div class="field">
+      <label for="filterFrom">From date</label>
+      <input type="date" id="filterFrom">
+    </div>
+    <div class="field">
+      <label for="filterTo">To date</label>
+      <input type="date" id="filterTo">
+    </div>
+    <div class="filters-actions">
+      <button class="btn-ghost" id="resetBtn" type="button">↺ Reset filters</button>
+      <button class="btn-ghost" id="exportBtn" type="button">⬇ Export CSV</button>
+      <button class="btn-ghost danger" id="clearBtn" type="button">🗑 Clear all data</button>
+    </div>
+  </section>
+
+  <!-- TABLE -->
+  <section class="table-wrap">
+    <div class="table-head">
+      <h2>Tracked Events</h2>
+      <span class="result-count" id="resultCount">0 events</span>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th data-sort="userId">User <span class="arrow">↕</span></th>
+            <th data-sort="referrerId">Referrer <span class="arrow">↕</span></th>
+            <th data-sort="action">Action <span class="arrow">↕</span></th>
+            <th data-sort="assetName">Asset <span class="arrow">↕</span></th>
+            <th data-sort="timestamp">Date &amp; Time <span class="arrow">↕</span></th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+    <div class="empty" id="emptyState" style="display:none;">
+      <div class="big">📭</div>
+      <p>No tracked events yet.</p>
+      <p style="margin-top:6px;">Interactions on the <a href="share.html">Share Page</a> will appear here.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="app-hidden" id="appFooter">
+  <p>© GoMagic Affiliate Program — Presented by GoLoans</p>
+</footer>
+
+<script>
+/* ─────────────────────────────────────────────────────────────────────────
+ * LOGIN GATE
+ * NOTE: This is a client-side gate only. On a static site the credentials
+ * cannot be truly hidden — for real protection, move auth to a backend.
+ * ───────────────────────────────────────────────────────────────────────── */
+(function () {
+  var CREDENTIALS = { username: 'Admin', password: 'GOAT!!!' };
+  var SESSION_KEY = 'gomagic_admin_authed';
+
+  var overlay = document.getElementById('loginOverlay');
+  var form = document.getElementById('loginForm');
+  var userInput = document.getElementById('loginUser');
+  var passInput = document.getElementById('loginPass');
+  var errorEl = document.getElementById('loginError');
+  var gated = ['appNav', 'appMain', 'appFooter'].map(function (id) {
+    return document.getElementById(id);
+  });
+
+  function showApp() {
+    overlay.style.display = 'none';
+    gated.forEach(function (el) { if (el) el.classList.remove('app-hidden'); });
+    // Signal the dashboard it may initialise.
+    document.dispatchEvent(new CustomEvent('admin:authenticated'));
+  }
+
+  function isAuthed() {
+    try { return sessionStorage.getItem(SESSION_KEY) === '1'; } catch (e) { return false; }
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var ok = userInput.value === CREDENTIALS.username &&
+             passInput.value === CREDENTIALS.password;
+    if (ok) {
+      try { sessionStorage.setItem(SESSION_KEY, '1'); } catch (e2) { /* ignore */ }
+      errorEl.classList.remove('show');
+      showApp();
+    } else {
+      errorEl.classList.add('show');
+      passInput.value = '';
+      passInput.focus();
+    }
+  });
+
+  var logoutBtn = document.getElementById('logoutBtn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', function () {
+      try { sessionStorage.removeItem(SESSION_KEY); } catch (e) { /* ignore */ }
+      window.location.reload();
+    });
+  }
+
+  if (isAuthed()) {
+    showApp();
+  } else {
+    userInput.focus();
+  }
+})();
+</script>
+
+<script src="js/analytics.js"></script>
+<script>
+(function () {
+  var A = window.GoMagicAnalytics;
+
+  var els = {
+    cards: document.getElementById('cards'),
+    search: document.getElementById('search'),
+    referrer: document.getElementById('filterReferrer'),
+    user: document.getElementById('filterUser'),
+    action: document.getElementById('filterAction'),
+    from: document.getElementById('filterFrom'),
+    to: document.getElementById('filterTo'),
+    reset: document.getElementById('resetBtn'),
+    exportBtn: document.getElementById('exportBtn'),
+    clearBtn: document.getElementById('clearBtn'),
+    body: document.getElementById('tableBody'),
+    count: document.getElementById('resultCount'),
+    empty: document.getElementById('emptyState')
+  };
+
+  var sort = { key: 'timestamp', dir: 'desc' };
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function fmtDate(iso) {
+    var d = new Date(iso);
+    if (isNaN(d)) return iso;
+    return d.toLocaleString(undefined, {
+      year: 'numeric', month: 'short', day: '2-digit',
+      hour: '2-digit', minute: '2-digit'
+    });
+  }
+
+  /* ── Summary cards (driven by the action registry → future-proof) ── */
+  function renderCards() {
+    var s = A.getSummary();
+    var summaryTypes = [];
+    for (var k in A.ACTION_TYPES) {
+      if (A.ACTION_TYPES[k].summary) summaryTypes.push(A.ACTION_TYPES[k]);
+    }
+    var icons = { image_download: '🖼️', video_download: '🎬', referral_copy: '🔗' };
+    var html = '';
+    summaryTypes.forEach(function (t) {
+      html += '<div class="card">' +
+        '<div class="card-icon">' + (icons[t.id] || '📊') + '</div>' +
+        '<div class="card-value">' + (s[t.id] || 0) + '</div>' +
+        '<div class="card-label">' + esc(t.label) + '</div></div>';
+    });
+    html += '<div class="card total">' +
+      '<div class="card-icon">📈</div>' +
+      '<div class="card-value">' + (s.total || 0) + '</div>' +
+      '<div class="card-label">Total tracked actions</div></div>';
+    els.cards.innerHTML = html;
+  }
+
+  /* ── Populate filter dropdowns ── */
+  function populateFilters() {
+    var events = A.getEvents();
+    var referrers = {}, users = {};
+    events.forEach(function (e) {
+      if (e.referrerId) referrers[e.referrerId] = true;
+      if (e.userId) users[e.userId] = true;
+    });
+
+    fillSelect(els.referrer, Object.keys(referrers).sort(), 'All referrers');
+    fillSelect(els.user, Object.keys(users).sort(), 'All users');
+
+    // Action options come from the registry so new types show up automatically.
+    var actionOpts = [];
+    for (var k in A.ACTION_TYPES) actionOpts.push(A.ACTION_TYPES[k]);
+    var prevAction = els.action.value;
+    els.action.innerHTML = '<option value="">All actions</option>';
+    actionOpts.forEach(function (t) {
+      var o = document.createElement('option');
+      o.value = t.id; o.textContent = t.label;
+      els.action.appendChild(o);
+    });
+    els.action.value = prevAction;
+  }
+
+  function fillSelect(sel, values, allLabel) {
+    var prev = sel.value;
+    sel.innerHTML = '<option value="">' + allLabel + '</option>';
+    values.forEach(function (v) {
+      var o = document.createElement('option');
+      o.value = v; o.textContent = v;
+      sel.appendChild(o);
+    });
+    if (values.indexOf(prev) !== -1) sel.value = prev;
+  }
+
+  function currentCriteria() {
+    return {
+      text: els.search.value.trim(),
+      referrerId: els.referrer.value,
+      userId: els.user.value,
+      action: els.action.value,
+      from: els.from.value || null,
+      to: els.to.value ? els.to.value + 'T23:59:59' : null
+    };
+  }
+
+  function sortRows(rows) {
+    var key = sort.key, dir = sort.dir === 'asc' ? 1 : -1;
+    return rows.slice().sort(function (a, b) {
+      var va = a[key], vb = b[key];
+      if (key === 'timestamp') { va = new Date(va).getTime(); vb = new Date(vb).getTime(); }
+      else { va = String(va || '').toLowerCase(); vb = String(vb || '').toLowerCase(); }
+      if (va < vb) return -1 * dir;
+      if (va > vb) return 1 * dir;
+      return 0;
+    });
+  }
+
+  function render() {
+    var rows = sortRows(A.filter(currentCriteria()));
+    els.count.textContent = rows.length + (rows.length === 1 ? ' event' : ' events');
+
+    if (!rows.length) {
+      els.body.innerHTML = '';
+      els.empty.style.display = 'block';
+    } else {
+      els.empty.style.display = 'none';
+      var html = '';
+      rows.forEach(function (e) {
+        html += '<tr>' +
+          '<td class="mono">' + esc(e.userId) + '</td>' +
+          '<td class="mono">' + esc(e.referrerId) + '</td>' +
+          '<td><span class="pill ' + esc(e.action) + '">' + esc(A.labelFor(e.action)) + '</span></td>' +
+          '<td>' + esc(e.assetName || '—') + '</td>' +
+          '<td>' + esc(fmtDate(e.timestamp)) + '</td>' +
+        '</tr>';
+      });
+      els.body.innerHTML = html;
+    }
+
+    // Sort header indicators
+    document.querySelectorAll('thead th').forEach(function (th) {
+      var isSorted = th.dataset.sort === sort.key;
+      th.classList.toggle('sorted', isSorted);
+      var arrow = th.querySelector('.arrow');
+      if (arrow) arrow.textContent = isSorted ? (sort.dir === 'asc' ? '↑' : '↓') : '↕';
+    });
+  }
+
+  function refresh() {
+    renderCards();
+    populateFilters();
+    render();
+  }
+
+  /* ── Events ── */
+  ['input', 'change'].forEach(function (evt) {
+    els.search.addEventListener(evt, render);
+  });
+  [els.referrer, els.user, els.action, els.from, els.to].forEach(function (el) {
+    el.addEventListener('change', render);
+  });
+
+  document.querySelectorAll('thead th').forEach(function (th) {
+    th.addEventListener('click', function () {
+      var key = th.dataset.sort;
+      if (sort.key === key) sort.dir = sort.dir === 'asc' ? 'desc' : 'asc';
+      else { sort.key = key; sort.dir = 'asc'; }
+      render();
+    });
+  });
+
+  els.reset.addEventListener('click', function () {
+    els.search.value = '';
+    els.referrer.value = '';
+    els.user.value = '';
+    els.action.value = '';
+    els.from.value = '';
+    els.to.value = '';
+    render();
+  });
+
+  els.exportBtn.addEventListener('click', function () {
+    var rows = sortRows(A.filter(currentCriteria()));
+    var header = ['User ID', 'Referrer ID', 'Action', 'Asset', 'Timestamp'];
+    var lines = [header.join(',')];
+    rows.forEach(function (e) {
+      var cells = [e.userId, e.referrerId, A.labelFor(e.action), e.assetName || '', e.timestamp];
+      lines.push(cells.map(function (c) {
+        return '"' + String(c == null ? '' : c).replace(/"/g, '""') + '"';
+      }).join(','));
+    });
+    var blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'share-analytics-' + new Date().toISOString().slice(0, 10) + '.csv';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(a.href);
+  });
+
+  els.clearBtn.addEventListener('click', function () {
+    if (window.confirm('Delete all tracked analytics data? This cannot be undone.')) {
+      A.clear();
+      refresh();
+    }
+  });
+
+  // Live-update when events are recorded in another tab (e.g. the Share Page).
+  window.addEventListener('storage', function (e) {
+    if (e.key === 'gomagic_analytics_events') refresh();
+  });
+
+  refresh();
+})();
+</script>
+
+</body>
+</html>

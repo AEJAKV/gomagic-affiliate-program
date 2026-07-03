@@ -626,9 +626,18 @@ footer p { font-size: 13px; color: var(--offwhite); opacity: 0.45; }
 </footer>
 
 <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs@master/qrcode.min.js"></script>
+<script src="js/analytics.js"></script>
 <script>
   (function () {
     var referralLinkEl = document.getElementById('referralLink');
+
+    /* Analytics: modular tracker (see js/analytics.js). Guarded so the page
+       still works if the script fails to load. */
+    var Analytics = window.GoMagicAnalytics || null;
+    var ACTIONS = Analytics ? Analytics.ACTION_TYPES : {};
+    function track(action, details) {
+      if (Analytics) Analytics.track(action, details);
+    }
     var params = new URLSearchParams(window.location.search);
     var incomingLink = params.get('link');
     var link = (incomingLink && incomingLink.trim()) || referralLinkEl.textContent.trim();
@@ -691,12 +700,22 @@ footer p { font-size: 13px; color: var(--offwhite); opacity: 0.45; }
 
     if (downloadImgBtn) {
       downloadImgBtn.addEventListener('click', function () {
+        track(ACTIONS.IMAGE_DOWNLOAD, { assetName: 'goloans-share-image.jpg' });
         var go = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
         go.then(buildAndDownload);
       });
     }
 
+    /* Track video downloads (the download attribute triggers the browser save). */
+    var downloadVideoLink = document.querySelector('a.download-btn[download]');
+    if (downloadVideoLink) {
+      downloadVideoLink.addEventListener('click', function () {
+        track(ACTIONS.VIDEO_DOWNLOAD, { assetName: downloadVideoLink.getAttribute('download') || 'video' });
+      });
+    }
+
     copyBtn.addEventListener('click', function () {
+      track(ACTIONS.REFERRAL_COPY, { assetName: link });
       navigator.clipboard.writeText(link).then(function () {
         copyBtn.classList.add('copied');
         copyBtn.textContent = '✓ Copied!';
