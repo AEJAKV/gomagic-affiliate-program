@@ -1,0 +1,8 @@
+{
+  "name": "gomagic-affiliate-program",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@vercel/kv": "latest"
+  }
+}

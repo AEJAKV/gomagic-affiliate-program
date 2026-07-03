@@ -810,9 +810,11 @@ footer p { font-size: 13px; color: var(--offwhite); opacity: 0.45; }
   }
 
   function refresh() {
-    renderCards();
-    populateFilters();
-    render();
+    return A.fetchEvents().then(function () {
+      renderCards();
+      populateFilters();
+      render();
+    });
   }
 
   /* ── Events ── */
@@ -864,8 +866,7 @@ footer p { font-size: 13px; color: var(--offwhite); opacity: 0.45; }
 
   els.clearBtn.addEventListener('click', function () {
     if (window.confirm('Delete all tracked analytics data? This cannot be undone.')) {
-      A.clear();
-      refresh();
+      A.clearRemote().then(refresh);
     }
   });
 
@@ -874,7 +875,17 @@ footer p { font-size: 13px; color: var(--offwhite); opacity: 0.45; }
     if (e.key === 'gomagic_analytics_events') refresh();
   });
 
-  refresh();
+  function startDashboard() {
+    refresh();
+    window.setInterval(refresh, 30000);
+  }
+
+  try {
+    if (sessionStorage.getItem('gomagic_admin_authed') === '1') startDashboard();
+    else document.addEventListener('admin:authenticated', startDashboard, { once: true });
+  } catch (e) {
+    document.addEventListener('admin:authenticated', startDashboard, { once: true });
+  }
 })();
 </script>
 

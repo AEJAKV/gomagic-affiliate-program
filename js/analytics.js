@@ -10,13 +10,13 @@
  *  - Be future-proof: new event types are added by extending ACTION_TYPES
  *    only — no changes to the recording/reporting logic are required.
  *  - Be backend-ready: events are written through a pluggable "sink" so a
- *    real API endpoint (e.g. navigator.sendBeacon) can be added later without
- *    touching call sites.
+ *    real API endpoint (/api/track) without blocking the Share Page UX.
  *
  * Public API (window.GoMagicAnalytics)
  *  - ACTION_TYPES            → registry of known action types (extensible)
  *  - track(action, details)  → record a single event
- *  - getEvents()             → all stored events (newest first)
+ *  - getEvents()             → all cached/stored events (newest first)
+ *  - fetchEvents()           → fetch shared events from the backend
  *  - getSummary()            → aggregated totals keyed by action type
  *  - filter(criteria)        → filtered event list
  *  - clear()                 → wipe stored events (admin utility)
@@ -29,6 +29,7 @@
   var VISITOR_KEY = 'gomagic_visitor_id';
   var REFERRER_KEY = 'gomagic_referrer_code'; // shared with index.html referral system
   var MAX_EVENTS = 5000; // safety cap to keep localStorage bounded
+  var remoteEvents = null;
 
   /* ─────────────────────────────────────────────────────────────────────────
    * ACTION TYPE REGISTRY
@@ -119,16 +120,32 @@
     }
   }
 
+  function postRemote(event) {
+    var payload = JSON.stringify(event);
+    var sent = false;
+
+    if (navigator.sendBeacon) {
+      try {
+        sent = navigator.sendBeacon('/api/track', new Blob([payload], { type: 'application/json' }));
+      } catch (e) { /* fall through to fetch */ }
+    }
+
+    if (!sent && window.fetch) {
+      fetch('/api/track', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: payload,
+        keepalive: true
+      }).catch(function () { /* remote unavailable — local fallback already persisted */ });
+    }
+  }
+
   /* ─────────────────────────────────────────────────────────────────────────
    * SINKS
    * A sink is any function(event) that delivers an event somewhere.
-   * The localStorage sink is registered by default. A backend can be added via
-   * registerSink() without changing any call site, e.g.:
-   *   GoMagicAnalytics.registerSink(function (e) {
-   *     navigator.sendBeacon('/api/track', JSON.stringify(e));
-   *   });
+   * localStorage remains the fallback; /api/track is the shared admin source.
    * ─────────────────────────────────────────────────────────────────────── */
-  var sinks = [persist];
+  var sinks = [persist, postRemote];
 
   function registerSink(fn) {
     if (typeof fn === 'function') sinks.push(fn);
@@ -193,9 +210,28 @@
    * ─────────────────────────────────────────────────────────────────────── */
   function getEvents() {
     // Newest first.
-    return readAll().slice().sort(function (a, b) {
+    var source = remoteEvents || readAll();
+    return source.slice().sort(function (a, b) {
       return new Date(b.timestamp) - new Date(a.timestamp);
     });
+  }
+
+  function fetchEvents() {
+    if (!window.fetch) return Promise.resolve(getEvents());
+
+    return fetch('/api/events', { cache: 'no-store' })
+      .then(function (res) {
+        if (!res.ok) throw new Error('Remote analytics unavailable');
+        return res.json();
+      })
+      .then(function (data) {
+        remoteEvents = Array.isArray(data.events) ? data.events : [];
+        return getEvents();
+      })
+      .catch(function () {
+        remoteEvents = null;
+        return getEvents();
+      });
   }
 
   function labelFor(actionId) {
@@ -242,6 +278,16 @@
 
   function clear() {
     try { window.localStorage.removeItem(STORAGE_KEY); } catch (e) { /* ignore */ }
+    remoteEvents = [];
+  }
+
+  function clearRemote() {
+    clear();
+    if (!window.fetch) return Promise.resolve(false);
+
+    return fetch('/api/events', { method: 'DELETE' })
+      .then(function (res) { return res.ok; })
+      .catch(function () { return false; });
   }
 
   /* ─────────────────────────────────────────────────────────────────────────
@@ -251,9 +297,11 @@
     ACTION_TYPES: ACTION_TYPES,
     track: track,
     getEvents: getEvents,
+    fetchEvents: fetchEvents,
     getSummary: getSummary,
     filter: filter,
     clear: clear,
+    clearRemote: clearRemote,
     labelFor: labelFor,
     getVisitorId: getVisitorId,
     getReferrerId: getReferrerId,
