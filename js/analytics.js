@@ -10,7 +10,7 @@
  *  - Be future-proof: new event types are added by extending ACTION_TYPES
  *    only — no changes to the recording/reporting logic are required.
  *  - Be backend-ready: events are written through a pluggable "sink" so a
- *    real API endpoint (/api/track) without blocking the Share Page UX.
+ *    real API endpoint (/api/analytics) without blocking the Share Page UX.
  *
  * Public API (window.GoMagicAnalytics)
  *  - ACTION_TYPES            → registry of known action types (extensible)
@@ -30,6 +30,7 @@
   var REFERRER_KEY = 'gomagic_referrer_code'; // shared with index.html referral system
   var MAX_EVENTS = 5000; // safety cap to keep localStorage bounded
   var remoteEvents = null;
+  var remoteStorage = 'local-fallback';
 
   /* ─────────────────────────────────────────────────────────────────────────
    * ACTION TYPE REGISTRY
@@ -126,12 +127,12 @@
 
     if (navigator.sendBeacon) {
       try {
-        sent = navigator.sendBeacon('/api/track', new Blob([payload], { type: 'application/json' }));
+        sent = navigator.sendBeacon('/api/analytics', new Blob([payload], { type: 'application/json' }));
       } catch (e) { /* fall through to fetch */ }
     }
 
     if (!sent && window.fetch) {
-      fetch('/api/track', {
+      fetch('/api/analytics', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: payload,
@@ -143,7 +144,7 @@
   /* ─────────────────────────────────────────────────────────────────────────
    * SINKS
    * A sink is any function(event) that delivers an event somewhere.
-   * localStorage remains the fallback; /api/track is the shared admin source.
+  * localStorage remains the fallback; /api/analytics is the shared admin source.
    * ─────────────────────────────────────────────────────────────────────── */
   var sinks = [persist, postRemote];
 
@@ -219,19 +220,25 @@
   function fetchEvents() {
     if (!window.fetch) return Promise.resolve(getEvents());
 
-    return fetch('/api/events', { cache: 'no-store' })
+    return fetch('/api/analytics', { cache: 'no-store' })
       .then(function (res) {
         if (!res.ok) throw new Error('Remote analytics unavailable');
         return res.json();
       })
       .then(function (data) {
         remoteEvents = Array.isArray(data.events) ? data.events : [];
+        remoteStorage = data.storage || 'remote';
         return getEvents();
       })
       .catch(function () {
         remoteEvents = null;
+        remoteStorage = 'local-fallback';
         return getEvents();
       });
+  }
+
+  function getStorageStatus() {
+    return remoteStorage;
   }
 
   function labelFor(actionId) {
@@ -285,7 +292,7 @@
     clear();
     if (!window.fetch) return Promise.resolve(false);
 
-    return fetch('/api/events', { method: 'DELETE' })
+    return fetch('/api/analytics', { method: 'DELETE' })
       .then(function (res) { return res.ok; })
       .catch(function () { return false; });
   }
@@ -298,6 +305,7 @@
     track: track,
     getEvents: getEvents,
     fetchEvents: fetchEvents,
+    getStorageStatus: getStorageStatus,
     getSummary: getSummary,
     filter: filter,
     clear: clear,

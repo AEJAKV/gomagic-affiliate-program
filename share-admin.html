@@ -311,6 +311,15 @@ nav {
   opacity: 0.7;
 }
 
+.backend-status {
+  font-size: 12px;
+  color: var(--offwhite);
+  opacity: 0.68;
+  width: 100%;
+}
+.backend-status strong { color: var(--green); }
+.backend-status.warning strong { color: var(--gold); }
+
 .table-scroll { overflow-x: auto; }
 
 table {
@@ -571,6 +580,7 @@ footer p { font-size: 13px; color: var(--offwhite); opacity: 0.45; }
     <div class="table-head">
       <h2>Tracked Events</h2>
       <span class="result-count" id="resultCount">0 events</span>
+      <span class="backend-status" id="backendStatus">Checking analytics storage…</span>
     </div>
     <div class="table-scroll">
       <table>
@@ -677,6 +687,7 @@ footer p { font-size: 13px; color: var(--offwhite); opacity: 0.45; }
     clearBtn: document.getElementById('clearBtn'),
     body: document.getElementById('tableBody'),
     count: document.getElementById('resultCount'),
+    backendStatus: document.getElementById('backendStatus'),
     empty: document.getElementById('emptyState')
   };
 
@@ -807,6 +818,12 @@ footer p { font-size: 13px; color: var(--offwhite); opacity: 0.45; }
       var arrow = th.querySelector('.arrow');
       if (arrow) arrow.textContent = isSorted ? (sort.dir === 'asc' ? '↑' : '↓') : '↕';
     });
+
+    var status = A.getStorageStatus();
+    els.backendStatus.classList.toggle('warning', status !== 'vercel-kv');
+    els.backendStatus.innerHTML = status === 'vercel-kv'
+      ? 'Analytics storage: <strong>Vercel KV connected</strong>'
+      : 'Analytics storage: <strong>Temporary fallback</strong> — connect Vercel KV for reliable cross-user tracking.';
   }
 
   function refresh() {
