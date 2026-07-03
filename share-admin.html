@@ -823,7 +823,7 @@ footer p { font-size: 13px; color: var(--offwhite); opacity: 0.45; }
     els.backendStatus.classList.toggle('warning', status !== 'vercel-kv');
     els.backendStatus.innerHTML = status === 'vercel-kv'
       ? 'Analytics storage: <strong>Vercel KV connected</strong>'
-      : 'Analytics storage: <strong>Temporary fallback</strong> — connect Vercel KV for reliable cross-user tracking.';
+      : 'Analytics storage: <strong>Vercel KV not connected</strong> — tracked events cannot persist until KV is configured.';
   }
 
   function refresh() {

@@ -11,8 +11,6 @@ const VALID_ACTIONS = new Set([
   'qr_scan'
 ]);
 
-globalThis.__gomagicMemoryEvents = globalThis.__gomagicMemoryEvents || [];
-
 function json(res, status, body) {
   res.status(status).setHeader('content-type', 'application/json');
   res.end(JSON.stringify(body));
@@ -20,6 +18,14 @@ function json(res, status, body) {
 
 function hasKvConfig() {
   return Boolean(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN);
+}
+
+function requireKv() {
+  if (!hasKvConfig()) {
+    const error = new Error('Vercel KV is not connected. Analytics cannot be stored persistently until KV environment variables are configured.');
+    error.statusCode = 503;
+    throw error;
+  }
 }
 
 function cleanText(value, fallback = '') {
@@ -44,37 +50,25 @@ function normalizeEvent(body) {
 }
 
 async function readEvents() {
-  if (hasKvConfig()) {
-    const items = await kv.lrange(EVENTS_KEY, 0, MAX_EVENTS - 1);
-    return items.map((item) => {
-      try { return typeof item === 'string' ? JSON.parse(item) : item; }
-      catch { return null; }
-    }).filter(Boolean);
-  }
-
-  return globalThis.__gomagicMemoryEvents;
+  requireKv();
+  const items = await kv.lrange(EVENTS_KEY, 0, MAX_EVENTS - 1);
+  return items.map((item) => {
+    try { return typeof item === 'string' ? JSON.parse(item) : item; }
+    catch { return null; }
+  }).filter(Boolean);
 }
 
 async function writeEvent(event) {
-  if (hasKvConfig()) {
-    await kv.lpush(EVENTS_KEY, JSON.stringify(event));
-    await kv.ltrim(EVENTS_KEY, 0, MAX_EVENTS - 1);
-    return 'vercel-kv';
-  }
-
-  globalThis.__gomagicMemoryEvents.unshift(event);
-  globalThis.__gomagicMemoryEvents = globalThis.__gomagicMemoryEvents.slice(0, MAX_EVENTS);
-  return 'memory-fallback';
+  requireKv();
+  await kv.lpush(EVENTS_KEY, JSON.stringify(event));
+  await kv.ltrim(EVENTS_KEY, 0, MAX_EVENTS - 1);
+  return 'vercel-kv';
 }
 
 async function clearEvents() {
-  if (hasKvConfig()) {
-    await kv.del(EVENTS_KEY);
-    return 'vercel-kv';
-  }
-
-  globalThis.__gomagicMemoryEvents = [];
-  return 'memory-fallback';
+  requireKv();
+  await kv.del(EVENTS_KEY);
+  return 'vercel-kv';
 }
 
 export default async function handler(req, res) {
@@ -110,7 +104,7 @@ export default async function handler(req, res) {
     res.setHeader('allow', 'GET, POST, DELETE');
     return json(res, 405, { ok: false, error: 'Method not allowed' });
   } catch (error) {
-    return json(res, 500, {
+    return json(res, error.statusCode || 500, {
       ok: false,
       error: error.message || 'Analytics API failed'
     });
