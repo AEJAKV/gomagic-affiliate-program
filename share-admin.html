@@ -820,10 +820,10 @@ footer p { font-size: 13px; color: var(--offwhite); opacity: 0.45; }
     });
 
     var status = A.getStorageStatus();
-    els.backendStatus.classList.toggle('warning', status !== 'vercel-kv');
-    els.backendStatus.innerHTML = status === 'vercel-kv'
-      ? 'Analytics storage: <strong>Vercel KV connected</strong>'
-      : 'Analytics storage: <strong>Vercel KV not connected</strong> — tracked events cannot persist until KV is configured.';
+    els.backendStatus.classList.toggle('warning', status !== 'upstash-redis');
+    els.backendStatus.innerHTML = status === 'upstash-redis'
+      ? 'Analytics storage: <strong>Upstash Redis connected</strong>'
+      : 'Analytics storage: <strong>Upstash Redis not connected</strong> — tracked events cannot persist until Redis is configured.';
   }
 
   function refresh() {

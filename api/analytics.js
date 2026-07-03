@@ -1,4 +1,4 @@
-import { kv } from '@vercel/kv';
+import { Redis } from '@upstash/redis';
 
 const EVENTS_KEY = 'gomagic:analytics:events';
 const MAX_EVENTS = 5000;
@@ -17,12 +17,23 @@ function json(res, status, body) {
 }
 
 function hasKvConfig() {
-  return Boolean(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN);
+  return Boolean(getRedisConfig());
+}
+
+function getRedisConfig() {
+  const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
+  return url && token ? { url, token } : null;
+}
+
+function getRedis() {
+  const config = getRedisConfig();
+  return config ? new Redis(config) : null;
 }
 
 function requireKv() {
   if (!hasKvConfig()) {
-    const error = new Error('Vercel KV is not connected. Analytics cannot be stored persistently until KV environment variables are configured.');
+    const error = new Error('Upstash Redis is not connected. Analytics cannot be stored persistently until UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN are configured.');
     error.statusCode = 503;
     throw error;
   }
@@ -51,7 +62,8 @@ function normalizeEvent(body) {
 
 async function readEvents() {
   requireKv();
-  const items = await kv.lrange(EVENTS_KEY, 0, MAX_EVENTS - 1);
+  const redis = getRedis();
+  const items = await redis.lrange(EVENTS_KEY, 0, MAX_EVENTS - 1);
   return items.map((item) => {
     try { return typeof item === 'string' ? JSON.parse(item) : item; }
     catch { return null; }
@@ -60,15 +72,17 @@ async function readEvents() {
 
 async function writeEvent(event) {
   requireKv();
-  await kv.lpush(EVENTS_KEY, JSON.stringify(event));
-  await kv.ltrim(EVENTS_KEY, 0, MAX_EVENTS - 1);
-  return 'vercel-kv';
+  const redis = getRedis();
+  await redis.lpush(EVENTS_KEY, JSON.stringify(event));
+  await redis.ltrim(EVENTS_KEY, 0, MAX_EVENTS - 1);
+  return 'upstash-redis';
 }
 
 async function clearEvents() {
   requireKv();
-  await kv.del(EVENTS_KEY);
-  return 'vercel-kv';
+  const redis = getRedis();
+  await redis.del(EVENTS_KEY);
+  return 'upstash-redis';
 }
 
 export default async function handler(req, res) {
@@ -79,7 +93,7 @@ export default async function handler(req, res) {
 
       return json(res, 200, {
         ok: true,
-        storage: hasKvConfig() ? 'vercel-kv' : 'memory-fallback',
+        storage: hasKvConfig() ? 'upstash-redis' : 'not-configured',
         events
       });
     }

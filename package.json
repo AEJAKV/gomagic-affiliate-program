@@ -3,6 +3,6 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@vercel/kv": "latest"
+    "@upstash/redis": "latest"
   }
 }
