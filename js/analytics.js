@@ -249,7 +249,7 @@
   }
 
   function getSummary() {
-    var events = readAll();
+    var events = getEvents();
     var totals = { total: events.length };
     // Seed known action types at 0 so cards render even before any events.
     for (var k in ACTION_TYPES) totals[ACTION_TYPES[k].id] = 0;
