@@ -26,6 +26,15 @@ function getRedisConfig() {
   return url && token ? { url, token } : null;
 }
 
+function getEnvStatus() {
+  return {
+    hasUpstashUrl: Boolean(process.env.UPSTASH_REDIS_REST_URL),
+    hasUpstashToken: Boolean(process.env.UPSTASH_REDIS_REST_TOKEN),
+    hasKvUrl: Boolean(process.env.KV_REST_API_URL),
+    hasKvToken: Boolean(process.env.KV_REST_API_TOKEN)
+  };
+}
+
 function getRedis() {
   const config = getRedisConfig();
   return config ? new Redis(config) : null;
@@ -120,7 +129,8 @@ export default async function handler(req, res) {
   } catch (error) {
     return json(res, error.statusCode || 500, {
       ok: false,
-      error: error.message || 'Analytics API failed'
+      error: error.message || 'Analytics API failed',
+      env: getEnvStatus()
     });
   }
 }
